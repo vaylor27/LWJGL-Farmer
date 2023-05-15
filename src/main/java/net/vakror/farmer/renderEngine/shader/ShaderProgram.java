@@ -3,15 +3,24 @@ package net.vakror.farmer.renderEngine.shader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
+import java.util.Vector;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 public abstract class ShaderProgram {
 	
 	private final int programID;
 	private final int vertexShaderID;
 	private final int fragmentShaderID;
+
+	private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
 	public ShaderProgram(String vertexFile,String fragmentFile){
 		vertexShaderID = loadShader("src/main/resources/assets/shaders/" + vertexFile + ".glsl", GL20.GL_VERTEX_SHADER);
@@ -22,6 +31,58 @@ public abstract class ShaderProgram {
 		bindAttributes();
 		GL20.glLinkProgram(programID);
 		GL20.glValidateProgram(programID);
+		getAllUniformLoactions();
+	}
+
+	protected abstract void getAllUniformLoactions();
+
+	protected int getUniformLocation(String uniformName) {
+		return GL20.glGetUniformLocation(programID, uniformName);
+	}
+
+	protected void loadFloat(int location, float value) {
+		GL20.glUniform1f(location, value);
+	}
+
+	protected void loadVector(int location, Vector3f vector) {
+		GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+	}
+
+
+	protected void loadBoolean(int location, boolean value) {
+		float toLoad = value ? 1: 0;
+		GL20.glUniform1f(location, toLoad);
+	}
+
+	protected void loadMatrix(int location, Matrix4f matrix) {
+		store(matrixBuffer, matrix);
+		matrixBuffer.flip();
+		glUniformMatrix4fv(location, false, matrixBuffer);
+	}
+
+	public void store(FloatBuffer matrixBuffer, Matrix4f matrix) {
+		matrixBuffer.clear();
+
+		matrixBuffer.put(matrix.m00());
+		matrixBuffer.put(matrix.m01());
+		matrixBuffer.put(matrix.m02());
+		matrixBuffer.put(matrix.m03());
+
+
+		matrixBuffer.put(matrix.m10());
+		matrixBuffer.put(matrix.m11());
+		matrixBuffer.put(matrix.m12());
+		matrixBuffer.put(matrix.m13());
+
+		matrixBuffer.put(matrix.m20());
+		matrixBuffer.put(matrix.m21());
+		matrixBuffer.put(matrix.m22());
+		matrixBuffer.put(matrix.m23());
+
+		matrixBuffer.put(matrix.m30());
+		matrixBuffer.put(matrix.m31());
+		matrixBuffer.put(matrix.m32());
+		matrixBuffer.put(matrix.m33());
 	}
 	
 	public void start(){

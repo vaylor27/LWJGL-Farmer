@@ -1,21 +1,22 @@
 package net.vakror.farmer;
 
+import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
 import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.*;
 import net.vakror.farmer.renderEngine.shader.StaticShader;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class FarmerGameMain {
 
     public static void main(String[] args) {
-
-        Window window = new Window();
+        Window.init();
         Loader loader = new Loader();
-        Renderer renderer = new Renderer();
         StaticShader shader = new StaticShader();
+        Renderer renderer = new Renderer(shader);
 
         float[] vertices = {
                 -0.5f,0.5f,0,	//V0
@@ -36,22 +37,24 @@ public class FarmerGameMain {
                 1,0 //V3
         };
 
-        RawModel model = loader.loadToVAO(vertices,indices);
+        RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
         ModelTexture texture = new ModelTexture(loader.loadTexture("test"));
-        TexturedModel texturedModel = new TexturedModel(model, texture);
+        TexturedModel staticModel = new TexturedModel(model, texture);
+        Entity entity = new Entity(staticModel, new Vector3f(0, 0, -1), 0, 0, 0, 1);
 
-        while(!GLFW.glfwWindowShouldClose(window.window)){
+        while(!GLFW.glfwWindowShouldClose(Window.window)) {
+            entity.increasePosition(new Vector3f(0, 0, -0.1f));
             //game logic
             renderer.prepare();
             shader.start();
-            renderer.render(texturedModel);
+            renderer.render(entity, shader);
             shader.stop();
-            window.updateDisplay();
+            Window.updateDisplay();
         }
 
         shader.cleanUp();
         loader.cleanUp();
-        window.closeDisplay();
+        Window.closeDisplay();
 
     }
 

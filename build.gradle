@@ -4,6 +4,10 @@ plugins {
     id 'java'
 }
 
+repositories {
+    mavenCentral()
+}
+
 project.ext.lwjglVersion = "3.3.2"
 project.ext.jomlVersion = "1.10.5"
 project.ext.lwjgl3AwtVersion = "0.1.8"
@@ -26,10 +30,6 @@ switch (OperatingSystem.current()) {
                 ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
                 : "natives-windows-x86"
         break
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -68,11 +68,9 @@ dependencies {
     implementation "org.lwjgl:lwjgl-rpmalloc"
     implementation "org.lwjgl:lwjgl-shaderc"
     implementation "org.lwjgl:lwjgl-spvc"
-    implementation "org.lwjgl:lwjgl-sse"
     implementation "org.lwjgl:lwjgl-stb"
     implementation "org.lwjgl:lwjgl-tinyexr"
     implementation "org.lwjgl:lwjgl-tinyfd"
-    implementation "org.lwjgl:lwjgl-tootle"
     implementation "org.lwjgl:lwjgl-vma"
     implementation "org.lwjgl:lwjgl-vulkan"
     implementation "org.lwjgl:lwjgl-xxhash"
@@ -105,11 +103,9 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-rpmalloc::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-spvc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-sse::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-tinyexr::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-tinyfd::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-tootle::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-vma::$lwjglNatives"
     if (lwjglNatives == "natives-macos" || lwjglNatives == "natives-macos-arm64") runtimeOnly "org.lwjgl:lwjgl-vulkan::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-xxhash::$lwjglNatives"

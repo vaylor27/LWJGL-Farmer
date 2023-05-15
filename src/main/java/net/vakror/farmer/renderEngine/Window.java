@@ -11,19 +11,15 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
 
-    public Window() {
-        init();
-    }
-
-    public long window;
-    String name = "Farmer Game";
-    String version = "0.0.1";
-    String status = "ALPHA";
-    private static final int WIDTH = 1280;
-    private static final int HEIGHT = 720;
+    public static long window;
+    private static String name = "Farmer Game";
+    private static String version = "0.0.1";
+    private static String status = "ALPHA";
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
     private static final int FPS_CAP = 60;
 
-    public void init() {
+    public static void init() {
         // Setup an error callback
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -65,11 +61,11 @@ public class Window {
         // bindings available for use.
     }
 
-    public void closeDisplay() {
+    public static void closeDisplay() {
         glfwDestroyWindow(window);
     }
 
-    public void updateDisplay() {
+    public static void updateDisplay() {
         glfwSwapBuffers(window); // swap the color buffers
 
         // Poll for window events. The key callback above will only be
