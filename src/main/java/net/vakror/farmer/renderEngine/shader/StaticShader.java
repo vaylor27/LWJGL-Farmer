@@ -1,5 +1,7 @@
 package net.vakror.farmer.renderEngine.shader;
 
+import net.vakror.farmer.renderEngine.entity.Camera;
+import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
 
 public class StaticShader extends ShaderProgram{
@@ -9,6 +11,7 @@ public class StaticShader extends ShaderProgram{
 
 	private int transformationMatrixLocation;
 	private int projectionMatrixLocation;
+	private int viewMatrixLocation;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -18,6 +21,7 @@ public class StaticShader extends ShaderProgram{
 	protected void getAllUniformLoactions() {
 		transformationMatrixLocation = super.getUniformLocation("transformationMatrix");
 		projectionMatrixLocation = super.getUniformLocation("projectionMatrix");
+		viewMatrixLocation = super.getUniformLocation("viewMatrix");
 	}
 
 	@Override
@@ -32,5 +36,9 @@ public class StaticShader extends ShaderProgram{
 
 	public void loadProjection(Matrix4f projection) {
 		super.loadMatrix(projectionMatrixLocation, projection);
+	}
+
+	public void loadViewMatrix(Camera camera) {
+		super.loadMatrix(viewMatrixLocation, Mth.createViewMatrix(camera));
 	}
 }

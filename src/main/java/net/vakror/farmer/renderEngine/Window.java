@@ -1,6 +1,8 @@
 package net.vakror.farmer.renderEngine;
 
 
+import net.vakror.farmer.FarmerGameMain;
+import net.vakror.farmer.renderEngine.entity.Camera;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -44,6 +46,20 @@ public class Window {
         if (window == NULL) {
             throw new IllegalStateException("Failed to create the GLFW window.");
         }
+
+        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_W && action == GLFW_REPEAT) {
+                FarmerGameMain.camera.move(0, 0, -0.02f);
+            }
+            if (key == GLFW_KEY_D && action == GLFW_REPEAT) {
+                FarmerGameMain.camera.move(0.02f, 0, 0);
+            }
+            if (key == GLFW_KEY_A && action == GLFW_REPEAT) {
+                FarmerGameMain.camera.move(-0.02f, 0, 0);
+            }
+        });
+
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);

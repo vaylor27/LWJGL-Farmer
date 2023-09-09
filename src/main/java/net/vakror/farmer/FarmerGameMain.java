@@ -1,5 +1,6 @@
 package net.vakror.farmer;
 
+import net.vakror.farmer.renderEngine.entity.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
@@ -11,6 +12,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class FarmerGameMain {
+    public static Camera camera = null;
 
     public static void main(String[] args) {
         Window.init();
@@ -42,11 +44,14 @@ public class FarmerGameMain {
         TexturedModel staticModel = new TexturedModel(model, texture);
         Entity entity = new Entity(staticModel, new Vector3f(0, 0, -1), 0, 0, 0, 1);
 
+        camera = new Camera();
+
         while(!GLFW.glfwWindowShouldClose(Window.window)) {
-            entity.increasePosition(new Vector3f(0, 0, -0.1f));
+//            entity.increasePosition(new Vector3f(0, 0, -0.1f));
             //game logic
             renderer.prepare();
             shader.start();
+            shader.loadViewMatrix(camera);
             renderer.render(entity, shader);
             shader.stop();
             Window.updateDisplay();
