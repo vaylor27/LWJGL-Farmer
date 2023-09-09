@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.vakror.farmer.renderEngine.model.RawModel;
+import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -24,28 +25,22 @@ public class Loader {
 	private final List<Integer> vbos = new ArrayList<Integer>();;
 	private final List<Integer> textures = new ArrayList<Integer>();
 	
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals,int[] indices){
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
 	}
 
-//	public int loadTexture(String fileName) {
-//		Texture texture = Texture.loadTexture("src/main/resources/assets/textures/" + fileName + ".png");
-//		texture.bind();
-//		textures.add(texture.id);
-//		return texture.id;
-//	}
-
-	public int loadTexture(String fileName) {
+	public int loadTexture(ResourcePath filePath) {
 		int textureId;
 		int width, height;
 		ByteBuffer image;
 
-		String fullPath = "src/main/resources/assets/textures/" + fileName + ".png";
+		String fullPath = filePath.getImagePath();
 
 		try	(MemoryStack stack = MemoryStack.stackPush()) {
 			IntBuffer w = stack.mallocInt(1);

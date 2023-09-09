@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.Vector;
 
+import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -22,9 +23,9 @@ public abstract class ShaderProgram {
 
 	private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
-	public ShaderProgram(String vertexFile,String fragmentFile){
-		vertexShaderID = loadShader("src/main/resources/assets/shaders/" + vertexFile + ".glsl", GL20.GL_VERTEX_SHADER);
-		fragmentShaderID = loadShader("src/main/resources/assets/shaders/" + fragmentFile + ".glsl", GL20.GL_FRAGMENT_SHADER);
+	public ShaderProgram(ResourcePath vertexFile, ResourcePath fragmentFile){
+		vertexShaderID = loadShader(vertexFile.getShaderPath(), GL20.GL_VERTEX_SHADER);
+		fragmentShaderID = loadShader(fragmentFile.getShaderPath(), GL20.GL_FRAGMENT_SHADER);
 		programID = GL20.glCreateProgram();
 		GL20.glAttachShader(programID, vertexShaderID);
 		GL20.glAttachShader(programID, fragmentShaderID);
