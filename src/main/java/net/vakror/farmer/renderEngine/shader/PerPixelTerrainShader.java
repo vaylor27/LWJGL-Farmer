@@ -6,7 +6,7 @@ import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
 
-public class PerPixelStaticShader extends ShaderProgram{
+public class PerPixelTerrainShader extends ShaderProgram{
 
 	private int transformationMatrixLocation;
 	private int projectionMatrixLocation;
@@ -16,11 +16,11 @@ public class PerPixelStaticShader extends ShaderProgram{
 	private int ambientLightLocation;
 	private int useFakeLightingLocation;
 
-	public PerPixelStaticShader() {
-		super(new ResourcePath("per-pixel/vertexShader"), new ResourcePath("per-pixel/fragmentShader"));
+	public PerPixelTerrainShader() {
+		super(new ResourcePath("per-pixel/terrain/vertexShader"), new ResourcePath("per-pixel/terrain/fragmentShader"));
 	}
 
-	public PerPixelStaticShader(ResourcePath resourcePath, ResourcePath resourcePath1) {
+	public PerPixelTerrainShader(ResourcePath resourcePath, ResourcePath resourcePath1) {
 		super(resourcePath, resourcePath1);
 	}
 
@@ -41,7 +41,7 @@ public class PerPixelStaticShader extends ShaderProgram{
 		super.bindAttribute(1, "textureCoords");
 		super.bindAttribute(2, "normal");
 	}
-	
+
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(transformationMatrixLocation, matrix);
 	}

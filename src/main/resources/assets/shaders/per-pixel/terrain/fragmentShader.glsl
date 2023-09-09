@@ -25,5 +25,4 @@ void main(void){
 	}
 
 	out_Color = vec4(diffuse, 1.0) * textureColor;
-
 }

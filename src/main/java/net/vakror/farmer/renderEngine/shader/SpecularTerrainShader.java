@@ -1,18 +1,14 @@
 package net.vakror.farmer.renderEngine.shader;
 
-import net.vakror.farmer.renderEngine.entity.Camera;
-import net.vakror.farmer.renderEngine.entity.Light;
-import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
-import org.joml.Matrix4f;
 
-public class SpecularStaticShader extends PerPixelStaticShader{
+public class SpecularTerrainShader extends PerPixelTerrainShader {
 
 	private int shineDamperLocation;
 	private int reflectivityLocation;
 
-	public SpecularStaticShader() {
-		super(new ResourcePath("specular/vertexShader"), new ResourcePath("specular/fragmentShader"));
+	public SpecularTerrainShader() {
+		super(new ResourcePath("specular/terrain/vertexShader"), new ResourcePath("specular/terrain/fragmentShader"));
 	}
 
 	@Override

@@ -133,4 +133,7 @@ public abstract class ShaderProgram {
 		return shaderID;
 	}
 
+	public void loadShineVariables(float damper, float reflectivity) {}
+
+	public void loadFakeLighting(boolean useFakeLighting) {}
 }
