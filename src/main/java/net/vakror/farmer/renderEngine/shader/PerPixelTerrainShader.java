@@ -5,6 +5,7 @@ import net.vakror.farmer.renderEngine.entity.Light;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class PerPixelTerrainShader extends ShaderProgram{
 
@@ -15,6 +16,9 @@ public class PerPixelTerrainShader extends ShaderProgram{
 	private int lightColorLocation;
 	private int ambientLightLocation;
 	private int useFakeLightingLocation;
+	private int densityLocation;
+	private int gradientLocation;
+	private int skyColorLocation;
 
 	public PerPixelTerrainShader() {
 		super(new ResourcePath("per-pixel/terrain/vertexShader"), new ResourcePath("per-pixel/terrain/fragmentShader"));
@@ -33,6 +37,9 @@ public class PerPixelTerrainShader extends ShaderProgram{
 		lightColorLocation = super.getUniformLocation("lightColor");
 		ambientLightLocation = super.getUniformLocation("ambientLight");
 		useFakeLightingLocation = super.getUniformLocation("useFakeLighting");
+		densityLocation = super.getUniformLocation("density");
+		gradientLocation = super.getUniformLocation("gradient");
+		skyColorLocation = super.getUniformLocation("skyColor");
 	}
 
 	@Override
@@ -40,6 +47,16 @@ public class PerPixelTerrainShader extends ShaderProgram{
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "textureCoords");
 		super.bindAttribute(2, "normal");
+	}
+
+	public void loadSkyColor(Vector3f skyColor) {
+		super.loadVector(skyColorLocation, skyColor);
+	}
+
+	@Override
+	public void loadFog(float density, float gradient) {
+		super.loadFloat(densityLocation, density);
+		super.loadFloat(gradientLocation, gradient);
 	}
 
 	public void loadTransformationMatrix(Matrix4f matrix) {

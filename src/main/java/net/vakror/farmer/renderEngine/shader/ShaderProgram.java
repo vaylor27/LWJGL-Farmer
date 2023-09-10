@@ -127,7 +127,7 @@ public abstract class ShaderProgram {
 		GL20.glCompileShader(shaderID);
 		if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS )== GL11.GL_FALSE){
 			System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
-			System.err.println("Could not compile shader!");
+			System.err.println("Could not compile shader " + file + "!");
 			System.exit(-1);
 		}
 		return shaderID;
@@ -136,4 +136,6 @@ public abstract class ShaderProgram {
 	public void loadShineVariables(float damper, float reflectivity) {}
 
 	public void loadFakeLighting(boolean useFakeLighting) {}
+
+	public void loadFog(float density, float gradient) {}
 }

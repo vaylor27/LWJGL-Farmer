@@ -9,8 +9,17 @@ out vec4 out_Color;
 uniform sampler2D textureSampler;
 uniform vec3 lightColor;
 uniform float ambientLight;
+uniform vec3 skyColor;
 
 void main(void){
+	if (visibility <= 0) {
+		discard;
+	}
+
+	vec4 textureColor = texture(textureSampler, pass_textureCoords);
+	if (textureColor.a < 0.5) {
+		discard;
+	}
 
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLight = normalize(toLightVector);
@@ -19,10 +28,6 @@ void main(void){
 	float brightness = max(nDot1, ambientLight);
 	vec3 diffuse = brightness * lightColor;
 
-	vec4 textureColor = texture(textureSampler, pass_textureCoords);
-	if (textureColor.a < 0.5) {
-		discard;
-	}
-
 	out_Color = vec4(diffuse, 1.0) * textureColor;
+	out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
 }

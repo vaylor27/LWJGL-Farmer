@@ -62,6 +62,7 @@ public class MasterRenderer {
 
     private void renderEntities(Light light, Camera camera) {
         entityShader.start();
+        entityShader.loadSkyColor(FarmerGameMain.options.skyColor);
         entityShader.loadLight(light, FarmerGameMain.options.ambientLight);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(entities);
@@ -71,6 +72,7 @@ public class MasterRenderer {
 
     private void renderTerrain(Light light, Camera camera) {
         terrainShader.start();
+        terrainShader.loadSkyColor(FarmerGameMain.options.skyColor);
         terrainShader.loadLight(light, FarmerGameMain.options.ambientLight);
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);
@@ -81,7 +83,7 @@ public class MasterRenderer {
     public void prepare(){
         GL11.glEnable(GL_DEPTH_TEST);
         GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        GL11.glClearColor(1, 0, 0, 1);
+        GL11.glClearColor(FarmerGameMain.options.skyColor.x, FarmerGameMain.options.skyColor.y, FarmerGameMain.options.skyColor.z, 1);
     }
 
     public void processEntity(Entity entity) {
