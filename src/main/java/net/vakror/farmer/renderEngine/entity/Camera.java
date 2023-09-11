@@ -8,7 +8,7 @@ public class Camera {
 
     private final Vector3f position = new Vector3f(0, 10, 0);
     private float pitch;
-    private float yaw = 180;
+    private float yaw = 90;
     private float roll;
 
     public void move(float x, float y, float z) {

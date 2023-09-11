@@ -3,6 +3,7 @@ package net.vakror.farmer;
 import net.vakror.farmer.renderEngine.entity.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
+import net.vakror.farmer.renderEngine.entity.Player;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
 import net.vakror.farmer.renderEngine.Window;
@@ -24,6 +25,7 @@ public class FarmerGameMain {
     public static Camera camera = null;
     public static Options options = new Options(true, 0.2f);
     public static MasterRenderer renderer;
+    public static Player player;
 
     public static void main(String[] args) {
 
@@ -59,6 +61,11 @@ public class FarmerGameMain {
             allCubes.add(new Entity(staticModel2, new Vector3f(x, 0, z), 0, 0, 0f, 1f));
         }
 
+        RawModel bunnyModel = OBJLoader.loadOBJ(new ResourcePath("stanfordBunny"), loader);
+        TexturedModel stanfordBunny = new TexturedModel(bunnyModel, new ModelTexture(loader.loadTexture(new ResourcePath("white"))));
+
+        player = new Player(stanfordBunny, new Vector3f(100, 0, -50), 0, 0, 0, 1);
+
         Light light = new Light(new Vector3f(400, 400, 100), new Vector3f(1, 1, 1));
 
         Terrain terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture(new ResourcePath("grass")), 1, 0, false, true));
@@ -68,7 +75,9 @@ public class FarmerGameMain {
 
         renderer = new MasterRenderer();
         while(!GLFW.glfwWindowShouldClose(Window.window)) {
+            player.move();
             //game logic
+            renderer.processEntity(player);
             for (Entity cube : allCubes) {
                 renderer.processEntity(cube);
             }

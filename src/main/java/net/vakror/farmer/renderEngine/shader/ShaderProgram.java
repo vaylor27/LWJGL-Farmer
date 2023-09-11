@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.Vector;
 
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
@@ -108,7 +107,8 @@ public abstract class ShaderProgram {
 	protected void bindAttribute(int attribute, String variableName){
 		GL20.glBindAttribLocation(programID, attribute, variableName);
 	}
-	
+
+	@SuppressWarnings("all")
 	private static int loadShader(String file, int type){
 		StringBuilder shaderSource = new StringBuilder();
 		try{

@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static org.lwjgl.glfw.GLFW.*;
@@ -23,7 +24,8 @@ public class Window {
     private static String status = "ALPHA";
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
-    private static final int FPS_CAP = 60;
+    private static long lastFrameTime;
+    private static float delta;
 
     public static void init() {
         // Setup an error callback
@@ -54,24 +56,40 @@ public class Window {
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_W) {
-                FarmerGameMain.camera.move(0, 0, 1f);
+                FarmerGameMain.player.currentSpeed= FarmerGameMain.options.runSpeed;
             }
-            if (key == GLFW_KEY_S) {
-                FarmerGameMain.camera.move(0, 0, -1f);
+            if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+                FarmerGameMain.player.currentSpeed = 0;
+            } if (key == GLFW_KEY_S) {
+                FarmerGameMain.player.currentSpeed= -FarmerGameMain.options.runSpeed;
+            }
+            if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+                FarmerGameMain.player.currentSpeed = 0;
             }
             if (key == GLFW_KEY_D) {
-                FarmerGameMain.camera.move(-1f, 0, 0);
+                FarmerGameMain.player.currentTurnSpeed = -FarmerGameMain.options.turnSpeed;
+            } if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+                FarmerGameMain.player.currentTurnSpeed = 0;
             }
             if (key == GLFW_KEY_A) {
-                FarmerGameMain.camera.move(1f, 0, 0);
-            }
-            if (key == GLFW_KEY_LEFT_SHIFT) {
-                FarmerGameMain.camera.move(0, -1f, 0);
-            }
-            if (key == GLFW_KEY_SPACE) {
-                FarmerGameMain.camera.move(0, 1f, 0);
+                FarmerGameMain.player.currentTurnSpeed = FarmerGameMain.options.turnSpeed;
+            } if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+                FarmerGameMain.player.currentTurnSpeed = 0;
             }
 
+
+
+
+            if (key == GLFW_KEY_SPACE) {
+                if (!FarmerGameMain.player.isInAir) {
+                    FarmerGameMain.player.jump();
+                }
+            }
+            if (key == GLFW_KEY_LEFT_SHIFT) {
+                if (!FarmerGameMain.player.isInAir) {
+                    FarmerGameMain.player.sneak();
+                }
+            }
             if (key == GLFW_KEY_C) {
                 FarmerGameMain.options.ambientLight-=0.2f;
                 FarmerGameMain.options.ambientLight = Math.max(0, FarmerGameMain.options.ambientLight);
@@ -124,6 +142,7 @@ public class Window {
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
+        lastFrameTime = getCurrentTime();
     }
 
     public static void closeDisplay() {
@@ -131,14 +150,6 @@ public class Window {
     }
 
 
-    private static long lastFrameTime = getCurrentTime();
-    private static float delta = 1.0f / 60f;  // TODO
-
-    private static long oldNanoTime = 0;
-    private static int frames = 0;
-
-    static List<Float> fpsArray = new ArrayList<>();
-    static List<Float> afpsArray = new ArrayList<>();
     public static void updateDisplay() {
         glfwSwapBuffers(window); // swap the color buffers
 
@@ -149,7 +160,10 @@ public class Window {
         long currentFrameTime = getCurrentTime();
         delta = (currentFrameTime - lastFrameTime) / 1000f;
         lastFrameTime = currentFrameTime;
+    }
 
+    public static float getFrameTimeSeconds() {
+        return delta;
     }
 
     private static long getCurrentTime() {
