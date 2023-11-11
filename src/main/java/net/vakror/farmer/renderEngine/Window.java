@@ -1,15 +1,10 @@
 package net.vakror.farmer.renderEngine;
 
 
-import net.vakror.farmer.FarmerGameMain;
-import net.vakror.farmer.renderEngine.entity.Camera;
+import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static org.lwjgl.glfw.GLFW.*;
@@ -54,78 +49,8 @@ public class Window {
         }
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_W) {
-                FarmerGameMain.player.currentSpeed= FarmerGameMain.options.runSpeed;
-            }
-            if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-                FarmerGameMain.player.currentSpeed = 0;
-            } if (key == GLFW_KEY_S) {
-                FarmerGameMain.player.currentSpeed= -FarmerGameMain.options.runSpeed;
-            }
-            if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-                FarmerGameMain.player.currentSpeed = 0;
-            }
-            if (key == GLFW_KEY_D) {
-                FarmerGameMain.player.currentTurnSpeed = -FarmerGameMain.options.turnSpeed;
-            } if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-                FarmerGameMain.player.currentTurnSpeed = 0;
-            }
-            if (key == GLFW_KEY_A) {
-                FarmerGameMain.player.currentTurnSpeed = FarmerGameMain.options.turnSpeed;
-            } if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-                FarmerGameMain.player.currentTurnSpeed = 0;
-            }
+        glfwSetKeyCallback(window, Window::executeKey);
 
-
-
-
-            if (key == GLFW_KEY_SPACE) {
-                if (!FarmerGameMain.player.isInAir) {
-                    FarmerGameMain.player.jump();
-                }
-            }
-            if (key == GLFW_KEY_LEFT_SHIFT) {
-                if (!FarmerGameMain.player.isInAir) {
-                    FarmerGameMain.player.sneak();
-                }
-            }
-            if (key == GLFW_KEY_C) {
-                FarmerGameMain.options.ambientLight-=0.2f;
-                FarmerGameMain.options.ambientLight = Math.max(0, FarmerGameMain.options.ambientLight);
-            }
-            if (key == GLFW_KEY_V) {
-                FarmerGameMain.options.ambientLight+=0.2f;
-                FarmerGameMain.options.ambientLight = Math.min(1, FarmerGameMain.options.ambientLight);
-            }
-
-            if (key == GLFW_KEY_E) {
-                FarmerGameMain.options.fov-=5f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-            if (key == GLFW_KEY_R) {
-                FarmerGameMain.options.fov+=5f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-
-            if (key == GLFW_KEY_T) {
-                FarmerGameMain.options.nearPlane-=1f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-            if (key == GLFW_KEY_Y) {
-                FarmerGameMain.options.nearPlane+=1f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-
-            if (key == GLFW_KEY_U) {
-                FarmerGameMain.options.farPlane-=10f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-            if (key == GLFW_KEY_I) {
-                FarmerGameMain.options.farPlane+=10f;
-                FarmerGameMain.renderer.regenProjectionMatrix();
-            }
-        });
 
 
         // Make the OpenGL context current
@@ -143,6 +68,15 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         lastFrameTime = getCurrentTime();
+    }
+
+
+    private static void executeKey(long window, int key, int scancode, int action, int mods) {
+        DefaultRegistries.KEYBINDINGS.forEach((keyBinding -> {
+            if (keyBinding.key == key) {
+                keyBinding.execute(scancode, action, mods);
+            }
+        }));
     }
 
     public static void closeDisplay() {

@@ -1,6 +1,7 @@
 package net.vakror.farmer.renderEngine;
 
 import net.vakror.farmer.FarmerGameMain;
+import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.shader.ShaderProgram;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
@@ -24,7 +25,7 @@ public abstract class AbstractRenderer {
         }
         shader.loadFakeLighting(texture.useFakeLight());
         shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
-        shader.loadFog(FarmerGameMain.options.fogDensity, FarmerGameMain.options.fogGradient);
+        shader.loadFog(Options.fogDensity(), Options.fogGradient());
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
     }

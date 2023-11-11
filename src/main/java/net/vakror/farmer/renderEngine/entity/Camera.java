@@ -4,12 +4,16 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 public class Camera {
-
-
+    private float distanceFromCamera = 50;
+    private float angleAroundPlayer = 0;
     private final Vector3f position = new Vector3f(0, 10, 0);
     private float pitch;
     private float yaw = 90;
     private float roll;
+//    private final Player player;
+//    public Camera(Player player) {
+//        this.player = player;
+//    }
 
     public void move(float x, float y, float z) {
         position.add(x, y, z);
@@ -42,4 +46,8 @@ public class Camera {
     public void setRoll(float roll) {
         this.roll = roll;
     }
+
+//    private void calculateZoom() {
+//        float
+//    }
 }

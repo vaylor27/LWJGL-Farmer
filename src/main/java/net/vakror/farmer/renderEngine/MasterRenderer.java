@@ -1,6 +1,7 @@
 package net.vakror.farmer.renderEngine;
 
 import net.vakror.farmer.FarmerGameMain;
+import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.entity.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
@@ -12,6 +13,7 @@ import net.vakror.farmer.renderEngine.shader.SpecularTerrainShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -23,14 +25,14 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class MasterRenderer {
 
-    private final PerPixelStaticShader entityShader = FarmerGameMain.options.useSpecularLighting ? new SpecularStaticShader(): new PerPixelStaticShader();
+    private final PerPixelStaticShader entityShader = Options.useSpecularLighting() ? new SpecularStaticShader(): new PerPixelStaticShader();
     private EntityRenderer entityRenderer;
 
     private final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
     private final List<Terrain> terrains = new ArrayList<>();
 
     private TerrainRenderer terrainRenderer;
-    private final PerPixelTerrainShader terrainShader = FarmerGameMain.options.useSpecularLighting ? new SpecularTerrainShader(): new PerPixelTerrainShader();
+    private final PerPixelTerrainShader terrainShader = Options.useSpecularLighting() ? new SpecularTerrainShader(): new PerPixelTerrainShader();
 
     public MasterRenderer() {
         enableCulling();
@@ -62,8 +64,8 @@ public class MasterRenderer {
 
     private void renderEntities(Light light, Camera camera) {
         entityShader.start();
-        entityShader.loadSkyColor(FarmerGameMain.options.skyColor);
-        entityShader.loadLight(light, FarmerGameMain.options.ambientLight);
+        entityShader.loadSkyColor(Options.skyColor());
+        entityShader.loadLight(light, Options.ambientLight());
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(entities);
         entityShader.stop();
@@ -72,8 +74,8 @@ public class MasterRenderer {
 
     private void renderTerrain(Light light, Camera camera) {
         terrainShader.start();
-        terrainShader.loadSkyColor(FarmerGameMain.options.skyColor);
-        terrainShader.loadLight(light, FarmerGameMain.options.ambientLight);
+        terrainShader.loadSkyColor(Options.skyColor());
+        terrainShader.loadLight(light, Options.ambientLight());
         terrainShader.loadViewMatrix(camera);
         terrainRenderer.render(terrains);
         terrainShader.stop();
@@ -83,7 +85,8 @@ public class MasterRenderer {
     public void prepare(){
         GL11.glEnable(GL_DEPTH_TEST);
         GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        GL11.glClearColor(FarmerGameMain.options.skyColor.x, FarmerGameMain.options.skyColor.y, FarmerGameMain.options.skyColor.z, 1);
+        Vector3f skyColor = Options.skyColor();
+        GL11.glClearColor(skyColor.x, skyColor.y, skyColor.z, 1);
     }
 
     public void processEntity(Entity entity) {
