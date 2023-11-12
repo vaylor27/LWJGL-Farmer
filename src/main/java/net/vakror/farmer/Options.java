@@ -87,7 +87,11 @@ public class Options {
 
     public static void read() {
         try {
-            List<String> lines = Files.readAllLines(new File("options.txt").toPath());
+            File file = new File("options.txt");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            List<String> lines = Files.readAllLines(file.toPath());
             for (String line : lines) {
                 String[] splitLine = line.split("=");
                 if (splitLine.length != 2) {
