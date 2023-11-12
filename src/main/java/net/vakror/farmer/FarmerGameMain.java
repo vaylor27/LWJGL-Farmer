@@ -31,6 +31,7 @@ public class FarmerGameMain {
 
     public static void main(String[] args) {
 
+        System.setProperty("java.awt.headless", "true");
         DefaultRegistries.registerDefaults();
         Window.init();
         Loader loader = new Loader();
