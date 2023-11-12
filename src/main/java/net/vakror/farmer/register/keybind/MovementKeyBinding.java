@@ -22,8 +22,11 @@ public class MovementKeyBinding extends KeyBinding {
             FarmerGameMain.player.currentTurnSpeed = amount;
         }
         if (action == GLFW_RELEASE) {
-            FarmerGameMain.player.currentTurnSpeed = 0;
-            FarmerGameMain.player.currentSpeed = 0;
+            if (!affectsSpeed) {
+                FarmerGameMain.player.currentTurnSpeed = 0;
+            } else {
+                FarmerGameMain.player.currentSpeed = 0;
+            }
         }
     }
 }
