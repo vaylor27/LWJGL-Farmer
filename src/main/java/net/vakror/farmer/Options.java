@@ -59,6 +59,10 @@ public class Options {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("runSpeed")).getAsFloatOption().value();
     }
 
+    public static float mipmap() {
+        return DefaultRegistries.OPTIONS.get(new RegistryLocation("mipMapLevel")).getAsFloatOption().value();
+    }
+
     public static float turnSpeed() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("turnSpeed")).getAsFloatOption().value();
     }

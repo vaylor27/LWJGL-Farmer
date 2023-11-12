@@ -23,6 +23,7 @@ public class OptionRegister {
         REGISTER.register("turnSpeed", new FloatOption(160));
         REGISTER.register("gravity", new FloatOption(50));
         REGISTER.register("jumpPower", new FloatOption(30));
+        REGISTER.register("mipMapLevel", new FloatOption(-0.4f));
 
         Options.read();
     }

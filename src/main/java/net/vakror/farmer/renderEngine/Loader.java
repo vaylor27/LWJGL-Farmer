@@ -6,13 +6,11 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryStack;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -62,6 +60,9 @@ public class Loader {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // sets MAGNIFICATION filtering to nearest
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
+		GL30.glGenerateMipmap(GL_TEXTURE_2D);
+		GL11.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		GL11.glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, Options.mipmap());
 		return textureId;
 	}
 	
