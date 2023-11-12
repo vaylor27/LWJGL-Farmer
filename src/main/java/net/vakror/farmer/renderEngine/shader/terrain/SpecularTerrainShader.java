@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine.shader;
+package net.vakror.farmer.renderEngine.shader.terrain;
 
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 
@@ -12,8 +12,8 @@ public class SpecularTerrainShader extends PerPixelTerrainShader {
 	}
 
 	@Override
-	protected void getAllUniformLoactions() {
-		super.getAllUniformLoactions();
+	protected void getAllUniformLocations() {
+		super.getAllUniformLocations();
 		shineDamperLocation = super.getUniformLocation("shineDamper");
 		reflectivityLocation = super.getUniformLocation("reflectivity");
 	}

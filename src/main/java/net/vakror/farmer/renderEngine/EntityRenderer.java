@@ -2,10 +2,9 @@ package net.vakror.farmer.renderEngine;
 
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
-import net.vakror.farmer.renderEngine.shader.PerPixelStaticShader;
+import net.vakror.farmer.renderEngine.shader.statiic.PerPixelStaticShader;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 import java.util.Map;
@@ -34,5 +33,6 @@ public class EntityRenderer extends AbstractRenderer {
 	private void prepareInstance(Entity entity) {
 		Matrix4f transforms = Mth.createTransformationMatrix(entity);
 		((PerPixelStaticShader) shader).loadTransformationMatrix(transforms);
+		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 }

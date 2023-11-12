@@ -1,10 +1,9 @@
 package net.vakror.farmer.renderEngine;
 
-import net.vakror.farmer.renderEngine.shader.PerPixelTerrainShader;
+import net.vakror.farmer.renderEngine.shader.terrain.PerPixelTerrainShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 

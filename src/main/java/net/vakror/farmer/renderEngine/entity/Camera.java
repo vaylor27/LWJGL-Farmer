@@ -1,5 +1,6 @@
 package net.vakror.farmer.renderEngine.entity;
 
+import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.Window;
 import org.joml.Math;
 import org.joml.Vector3f;
@@ -111,21 +112,21 @@ public class Camera {
 
     private void calculateZoom() {
         float zoomLevel = (float) scrollValue;
-        distanceFromPlayer -= zoomLevel;
+        distanceFromPlayer -= (zoomLevel * (Options.scrollSensitivity() / 100));
         distanceFromPlayer =  Math.clamp(10, 168, distanceFromPlayer);
         scrollValue = 0;
     }
 
     private void calculatePitch() {
         float pitchChange = (float)mouseDy - lastValueY; // *0.1f
-        pitch += pitchChange;
+        pitch += (pitchChange * (Options.sensitivity() / 100));
         pitch = Math.clamp(5, 70, pitch);
         lastValueY = (float) mouseDy;
     }
 
     private void calculateAngleAroundPlayer() {
         float angleChange = (float) mouseDx - lastValueX; // *0.1f
-        angleAroundPlayer -= angleChange;
+        angleAroundPlayer -= (angleChange * (Options.sensitivity() / 100));
 
         angleAroundPlayer = Math.clamp(-115, 115, angleAroundPlayer);
         lastValueX = (float) mouseDx;

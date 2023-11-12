@@ -1,12 +1,8 @@
-package net.vakror.farmer.renderEngine.shader;
+package net.vakror.farmer.renderEngine.shader.statiic;
 
-import net.vakror.farmer.renderEngine.entity.Camera;
-import net.vakror.farmer.renderEngine.entity.Light;
-import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
-import org.joml.Matrix4f;
 
-public class SpecularStaticShader extends PerPixelStaticShader{
+public class SpecularStaticShader extends PerPixelStaticShader {
 
 	private int shineDamperLocation;
 	private int reflectivityLocation;
@@ -16,8 +12,8 @@ public class SpecularStaticShader extends PerPixelStaticShader{
 	}
 
 	@Override
-	protected void getAllUniformLoactions() {
-		super.getAllUniformLoactions();
+	protected void getAllUniformLocations() {
+		super.getAllUniformLocations();
 		shineDamperLocation = super.getUniformLocation("shineDamper");
 		reflectivityLocation = super.getUniformLocation("reflectivity");
 	}

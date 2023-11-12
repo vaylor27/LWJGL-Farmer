@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -31,10 +32,10 @@ public abstract class ShaderProgram {
 		bindAttributes();
 		GL20.glLinkProgram(programID);
 		GL20.glValidateProgram(programID);
-		getAllUniformLoactions();
+		getAllUniformLocations();
 	}
 
-	protected abstract void getAllUniformLoactions();
+	protected abstract void getAllUniformLocations();
 
 	protected int getUniformLocation(String uniformName) {
 		return GL20.glGetUniformLocation(programID, uniformName);
@@ -44,8 +45,12 @@ public abstract class ShaderProgram {
 		GL20.glUniform1f(location, value);
 	}
 
-	protected void loadVector(int location, Vector3f vector) {
+	protected void loadVector3(int location, Vector3f vector) {
 		GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+	}
+
+	protected void loadVector2(int location, Vector2f vector) {
+		GL20.glUniform2f(location, vector.x, vector.y);
 	}
 
 
@@ -134,6 +139,10 @@ public abstract class ShaderProgram {
 	}
 
 	public void loadShineVariables(float damper, float reflectivity) {}
+
+	public void loadNumberOfRows(int numberOfRows) {}
+
+	public void loadOffset(float x, float y) {}
 
 	public void loadFakeLighting(boolean useFakeLighting) {}
 

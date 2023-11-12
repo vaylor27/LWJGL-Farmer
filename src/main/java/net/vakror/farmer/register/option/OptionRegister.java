@@ -24,6 +24,8 @@ public class OptionRegister {
         REGISTER.register("gravity", new FloatOption(50));
         REGISTER.register("jumpPower", new FloatOption(30));
         REGISTER.register("mipMapLevel", new FloatOption(-0.4f));
+        REGISTER.register("sensitivity", new FloatOption(100f));
+        REGISTER.register("scrollSensitivity", new FloatOption(100f));
 
         Options.read();
     }

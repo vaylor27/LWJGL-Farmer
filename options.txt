@@ -1,0 +1,16 @@
+ambientLight=0.1
+fogDensity=0.0
+gravity=50.0
+jumpPower=30.0
+nearPlane=0.1
+fogGradient=1000.0
+useSpecularLighting=true
+skyColor=0.5, 0.5, 0.5
+mipMapLevel=-0.4
+runSpeed=90.0
+sensitivity=75.0
+turnSpeed=160.0
+farPlane=1000.0
+useAmbientLight=false
+fov=70.0
+scrollSensitivity=100.0

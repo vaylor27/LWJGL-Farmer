@@ -75,6 +75,14 @@ public class Options {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("jumpPower")).getAsFloatOption().value();
     }
 
+    public static float sensitivity() {
+        return DefaultRegistries.OPTIONS.get(new RegistryLocation("sensitivity")).getAsFloatOption().value();
+    }
+
+    public static float scrollSensitivity() {
+        return DefaultRegistries.OPTIONS.get(new RegistryLocation("scrollSensitivity")).getAsFloatOption().value();
+    }
+
     public static void save() {
         File file = new File("options.txt");
         try(StringWriter writer = new StringWriter()) {

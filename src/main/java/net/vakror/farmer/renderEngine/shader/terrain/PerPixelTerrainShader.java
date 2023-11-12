@@ -1,19 +1,24 @@
-package net.vakror.farmer.renderEngine.shader;
+package net.vakror.farmer.renderEngine.shader.terrain;
 
 import net.vakror.farmer.renderEngine.entity.Camera;
 import net.vakror.farmer.renderEngine.entity.Light;
+import net.vakror.farmer.renderEngine.shader.ShaderProgram;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class PerPixelTerrainShader extends ShaderProgram{
+import java.util.List;
+
+public class PerPixelTerrainShader extends ShaderProgram {
+	private static final int MAX_LIGHTS = 5;
 
 	private int transformationMatrixLocation;
 	private int projectionMatrixLocation;
 	private int viewMatrixLocation;
-	private int lightPositionLocation;
-	private int lightColorLocation;
+	private int[] lightPositionLocation;
+	private int[] lightColorLocation;
+	private int[] attenuationLocation;
 	private int ambientLightLocation;
 	private int useFakeLightingLocation;
 	private int densityLocation;
@@ -29,17 +34,24 @@ public class PerPixelTerrainShader extends ShaderProgram{
 	}
 
 	@Override
-	protected void getAllUniformLoactions() {
+	protected void getAllUniformLocations() {
 		transformationMatrixLocation = super.getUniformLocation("transformationMatrix");
 		projectionMatrixLocation = super.getUniformLocation("projectionMatrix");
 		viewMatrixLocation = super.getUniformLocation("viewMatrix");
-		lightPositionLocation = super.getUniformLocation("lightPosition");
-		lightColorLocation = super.getUniformLocation("lightColor");
 		ambientLightLocation = super.getUniformLocation("ambientLight");
 		useFakeLightingLocation = super.getUniformLocation("useFakeLighting");
 		densityLocation = super.getUniformLocation("density");
 		gradientLocation = super.getUniformLocation("gradient");
 		skyColorLocation = super.getUniformLocation("skyColor");
+
+		lightPositionLocation = new int[MAX_LIGHTS];
+		lightColorLocation = new int[MAX_LIGHTS];
+		attenuationLocation = new int[MAX_LIGHTS];
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			lightPositionLocation[i] = super.getUniformLocation("lightPosition[" + i + "]");
+			lightColorLocation[i] = super.getUniformLocation("lightColor[" + i + "]");
+			attenuationLocation[i] = super.getUniformLocation("attenuation[" + i + "]");
+		}
 	}
 
 	@Override
@@ -50,7 +62,7 @@ public class PerPixelTerrainShader extends ShaderProgram{
 	}
 
 	public void loadSkyColor(Vector3f skyColor) {
-		super.loadVector(skyColorLocation, skyColor);
+		super.loadVector3(skyColorLocation, skyColor);
 	}
 
 	@Override
@@ -71,9 +83,18 @@ public class PerPixelTerrainShader extends ShaderProgram{
 		super.loadMatrix(viewMatrixLocation, Mth.createViewMatrix(camera));
 	}
 
-	public void loadLight(Light light, float ambientLight) {
-		super.loadVector(lightPositionLocation, light.getPosition());
-		super.loadVector(lightColorLocation, light.getColor());
+	public void loadLights(List<Light> lights, float ambientLight) {
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			if (i < lights.size()) {
+				super.loadVector3(lightPositionLocation[i], lights.get(i).getPosition());
+				super.loadVector3(lightColorLocation[i], lights.get(i).getColor());
+				super.loadVector3(attenuationLocation[i], lights.get(i).getAttenuation());
+			} else {
+				super.loadVector3(lightPositionLocation[i], new Vector3f(0.0f, 0.0f, 0.0f));
+				super.loadVector3(lightColorLocation[i], new Vector3f(0.0f, 0.0f, 0.0f));
+				super.loadVector3(attenuationLocation[i], new Vector3f(1, 0, 0));
+			}
+		}
 		super.loadFloat(ambientLightLocation, ambientLight);
 	}
 
