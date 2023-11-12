@@ -2,6 +2,7 @@ package net.vakror.farmer.register.keybind;
 
 import net.vakror.farmer.FarmerGameMain;
 import net.vakror.farmer.Options;
+import net.vakror.farmer.register.option.FloatOption;
 import net.vakror.farmer.renderEngine.registry.SimpleRegister;
 import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import net.vakror.farmer.renderEngine.registry.registries.KeyBindingRegistry;
@@ -19,6 +20,9 @@ public class KeyBindingRegister {
     public static final KeyBinding JUMP = new VerticalMovementKeyBinding(GLFW_KEY_SPACE, Options.jumpPower(), false);
     public static final KeyBinding SNEAK = new VerticalMovementKeyBinding(GLFW_KEY_LEFT_SHIFT, -(Options.jumpPower() / 2), false);
 
+    public static final KeyBinding FOV_PLUS = new OptionAlteringKeyBinding<>(GLFW_KEY_M, Options.fovOption(), FloatOption::increaseValue, true);
+    public static final KeyBinding FOV_MINUS = new OptionAlteringKeyBinding<>(GLFW_KEY_N, Options.fovOption(), FloatOption::decreaseValue, true);
+
 
     public static void registerKeyBindings() {
         REGISTER.register("forward", FORWARD);
@@ -27,19 +31,11 @@ public class KeyBindingRegister {
         REGISTER.register("right", RIGHT);
         REGISTER.register("jump", JUMP);
         REGISTER.register("sneak", SNEAK);
+        REGISTER.register("fov_plus", FOV_PLUS);
+        REGISTER.register("fov_minus", FOV_MINUS);
     }
 
             /*
-            if (key == GLFW_KEY_SPACE) {
-                if (!FarmerGameMain.player.isInAir) {
-                    FarmerGameMain.player.jump();
-                }
-            }
-            if (key == GLFW_KEY_LEFT_SHIFT) {
-                if (!FarmerGameMain.player.isInAir) {
-                    FarmerGameMain.player.sneak();
-                }
-            }
             if (key == GLFW_KEY_C) {
                 FarmerGameMain.options.ambientLight-=0.2f;
                 FarmerGameMain.options.ambientLight = Math.max(0, FarmerGameMain.options.ambientLight);

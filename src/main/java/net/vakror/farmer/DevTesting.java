@@ -65,7 +65,7 @@ public class DevTesting {
         terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture(new ResourcePath("grass")), 1, 0, false, true));
         terrain1 = new Terrain(1, 0, loader, new ModelTexture(loader.loadTexture(new ResourcePath("grass")), 1, 0, false, true));
 
-        FarmerGameMain.camera = new Camera();
+        FarmerGameMain.camera = new Camera(FarmerGameMain.player);
 
 
         FarmerGameMain.renderer = new MasterRenderer();
@@ -73,6 +73,7 @@ public class DevTesting {
 
     public static void tick() {
         FarmerGameMain.player.move();
+        FarmerGameMain.camera.tick();
         //game logic
         FarmerGameMain.renderer.processEntity(FarmerGameMain.player);
         for (Entity cube : allCubes) {

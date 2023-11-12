@@ -9,4 +9,13 @@ public class FloatOption extends Option<Float> {
     public Float valueFromString(String value) {
         return Float.valueOf(value);
     }
+
+    public void increaseValue() {
+        this.value++;
+    }
+
+    public void decreaseValue() {
+        this.value--;
+    }
+
 }
