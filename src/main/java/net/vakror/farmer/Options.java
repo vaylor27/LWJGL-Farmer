@@ -1,5 +1,6 @@
 package net.vakror.farmer;
 
+import net.vakror.farmer.register.option.FloatOption;
 import net.vakror.farmer.register.option.Option;
 import net.vakror.farmer.register.option.Vector3fOption;
 import net.vakror.farmer.renderEngine.registry.core.RegistryLocation;
@@ -28,6 +29,10 @@ public class Options {
 
     public static float fov() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("fov")).getAsFloatOption().value();
+    }
+
+    public static FloatOption fovOption() {
+        return DefaultRegistries.OPTIONS.get(new RegistryLocation("fov")).getAsFloatOption();
     }
 
     public static float nearPlane() {
