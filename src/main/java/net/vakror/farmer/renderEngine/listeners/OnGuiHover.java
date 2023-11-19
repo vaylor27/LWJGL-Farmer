@@ -13,11 +13,13 @@ public class OnGuiHover implements MouseMovementListener {
     @Override
     public void onMouseMove(long window, double x, double y) {
         if (!InputUtil.isCursorDisabled) {
+            boolean isHoveringOverGui = false;
             for (GuiTexture gui : DevTesting.guis) {
                 Vector2f ndcMouseCoords = currentMousePos.getAsNDC();
 
-                gui.setHovered(GuiHelper.isWithin(gui, ndcMouseCoords));
+                gui.setHovered(isHoveringOverGui = GuiHelper.isWithin(gui, ndcMouseCoords));
             }
+            InputUtil.isHoveringOverGui = isHoveringOverGui;
         }
     }
 }

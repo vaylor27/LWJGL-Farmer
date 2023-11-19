@@ -34,8 +34,6 @@ public class DevTesting {
     public static GuiRenderer guiRenderer;
     public static List<Light> lights = new ArrayList<>();
 
-    public static Entity tree;
-
     public static void runTest(Loader loader) {
 
         lights.add(new Light(new Vector3f(0, 1000, -1000), new Vector3f(1, 1, 1), new Vector3f(1, 0, 0)));
@@ -43,16 +41,9 @@ public class DevTesting {
         lights.add(new Light(new Vector3f(370, 17, 300), new Vector3f(0, 2, 2), new Vector3f(1, 0.01f, 0.002f)));
         lights.add(new Light(new Vector3f(293, 7, 305), new Vector3f(2, 2, 0), new Vector3f(1, 0.01f, 0.002f)));
 
-
-
-        RawModel model = OBJLoader.loadOBJ(new ResourcePath("tree"), loader);
-        ModelTexture texture = new ModelTexture(loader.loadTexture(new ResourcePath("tree")), 1, 0, false, true);
-        TexturedModel staticModel = new TexturedModel(model, texture);
-        tree = new Entity(staticModel, new Vector3f(0, 0, 0), 0, 0, 0, 50);
-
         generateObjects(loader);
 
-        GuiTexture gui = new ResetPositionGui(loader.loadTexture(new ResourcePath("test")), loader.loadTexture(new ResourcePath("image")), new Vector2f(0.25f, 0.25f), new Vector2f(0.5f, 0.25f));
+        GuiTexture gui = new ResetPositionGui(loader.loadTexture(new ResourcePath("test")), loader.loadTexture(new ResourcePath("image")), new Vector2f(0.25f, 0.25f), new Vector2f(0.25f, 0.25f));
 //        GuiTexture gui1 = new SelfDestructingGuiTexture(loader.loadTexture(new ResourcePath("test")), new Vector2f(0.45f, 0.75f), new Vector2f(16, 16), new Vector2f(0.25f, 0.25f));
         guis.add(gui);
 //        guis.add(gui1);
@@ -67,19 +58,12 @@ public class DevTesting {
         FarmerGameMain.camera.tick();
         //game logic
         FarmerGameMain.picker.update();
-        Vector3f terrainPoint = FarmerGameMain.picker.getCurrentTerrainPoint();
-        if (terrainPoint != null) {
-            tree.setPosition(terrainPoint);
-        }
-        entities.add(tree);
-//        System.out.println(FarmerGameMain.picker.getCurrentRay().x + ", " + FarmerGameMain.picker.getCurrentRay().y + ", " + FarmerGameMain.picker.getCurrentRay().z);
         for (Entity cube : entities) {
             FarmerGameMain.renderer.processEntity(cube);
         }
         FarmerGameMain.renderer.renderScene(entities, List.of(terrain), lights, FarmerGameMain.camera);
         guiRenderer.render(guis);
         Window.updateDisplay();
-        entities.remove(tree);
     }
 
     public static void generateObjects(Loader loader) {

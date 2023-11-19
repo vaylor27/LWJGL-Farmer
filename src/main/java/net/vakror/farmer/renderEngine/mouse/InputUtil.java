@@ -25,6 +25,7 @@ public class InputUtil {
     }
 
     public static final Map<Integer, KeyAction> keys = new HashMap<>();
+    public static boolean isHoveringOverGui;
     public static final MouseCoordinates currentMousePos = new MouseCoordinates(new Vector2f(0, 0));
     public static final MouseCoordinates previousCapturedPos = new MouseCoordinates(new Vector2f());
     public static final MouseCoordinates previousShownPos = new MouseCoordinates(new Vector2f());

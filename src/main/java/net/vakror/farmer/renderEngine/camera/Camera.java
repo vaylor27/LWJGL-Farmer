@@ -1,8 +1,8 @@
 package net.vakror.farmer.renderEngine.camera;
 
 import net.vakror.farmer.Options;
-import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.mouse.InputUtil;
+import net.vakror.farmer.renderEngine.terrain.Terrain;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -12,20 +12,23 @@ import static net.vakror.farmer.renderEngine.mouse.InputUtil.yScrollValue;
 
 
 public class Camera {
-    public float currentStrafeSpeed;
-    public float currentSpeed;
     private float distanceFromFocused = 1000;
     private final Vector3f position = new Vector3f(0, 10, 0);
     public CameraData data = CameraData.getDefault();
     public static float lastValueY = 0;
     public static float lastValueX = 0;
 
-    public Vector2f currentCameraFocusPoint = new Vector2f(500, 500);
+    public Vector2f currentCameraFocusPoint = new Vector2f(Terrain.SIZE / 2, Terrain.SIZE / 2);
+    public Vector2f nextCameraFocusPoint = null;
+    public double distanceToNextFocus;
+    public float alpha = 1;
+    public float alphaDecayRate;
 
     public Camera() {
     }
 
     public void tick() {
+        interpolateFocusPoints();
         calculateZoom();
         calculatePitch();
         calculateAngleAroundTerrain();
@@ -38,21 +41,38 @@ public class Camera {
 //        this.position.set(new Vector3f(Math.clamp(-300, 1300, position.x), Math.clamp(10, 100, position.y), Math.clamp(-300, 1300, position.z)));
     }
 
-    private void moveCamera() {
-        float distance = currentSpeed * Window.getFrameTimeSeconds();
-        float dx = (float) (distance * java.lang.Math.sin(java.lang.Math.toRadians(angleAroundFocused())));
-        float dz = (float) (distance * java.lang.Math.cos(java.lang.Math.toRadians(angleAroundFocused())));
-        this.currentCameraFocusPoint.add(dx, dz);
-        float distance1 = currentStrafeSpeed * Window.getFrameTimeSeconds();
-        float dx1 = (float) (distance1 * -java.lang.Math.sin(java.lang.Math.toRadians(angleAroundFocused())));
-        float dz1 = (float) (distance1 * java.lang.Math.cos(java.lang.Math.toRadians(angleAroundFocused())));
-        this.currentCameraFocusPoint.add(new Vector2f(dx, dz));
-        this.currentCameraFocusPoint.add(new Vector2f(dz1, dx1));
-        currentCameraFocusPoint = new Vector2f(Math.clamp(0, 1000, currentCameraFocusPoint.x), Math.clamp(0, 1000, currentCameraFocusPoint.y));
+    private void interpolateFocusPoints() {
+        if (alpha <= 0) {
+            nextCameraFocusPoint = null;
+            alpha = 1;
+            distanceToNextFocus = 0;
+        }
+        if (nextCameraFocusPoint != null) {
+            if (currentCameraFocusPoint.equals(nextCameraFocusPoint)) {
+                nextCameraFocusPoint = null;
+                alpha = 1;
+                distanceToNextFocus = 0;
+            } else {
+                if (distanceToNextFocus == 0) {
+                    Vector2f vectorToNewPos = new Vector2f();
+                    nextCameraFocusPoint.sub(currentCameraFocusPoint, vectorToNewPos);
+                    distanceToNextFocus = java.lang.Math.hypot(vectorToNewPos.x, vectorToNewPos.y);
+                    float time = 560;
+                    alphaDecayRate = Math.clamp(0.0001f, 0.9f, (float) (distanceToNextFocus / time / 1000));
+
+                }
+                float x = alpha * currentCameraFocusPoint.x + (1 - alpha) * nextCameraFocusPoint.x;
+                float y = alpha * currentCameraFocusPoint.y + (1 - alpha) * nextCameraFocusPoint.y;
+
+                currentCameraFocusPoint = new Vector2f(x, y);
+
+                alpha -= alphaDecayRate;
+            }
+        }
     }
 
-    public float angleAroundFocused() {
-        return data.angleAroundFocused;
+    private void moveCamera() {
+        currentCameraFocusPoint = new Vector2f(Math.clamp(0, 1000, currentCameraFocusPoint.x), Math.clamp(0, 1000, currentCameraFocusPoint.y));
     }
 
     private float calculateHorizontalDistance() {

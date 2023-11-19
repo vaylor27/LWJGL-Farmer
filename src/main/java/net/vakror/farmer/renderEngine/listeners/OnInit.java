@@ -36,9 +36,11 @@ public class OnInit implements InitializeListener {
 
     public static void setupListeners() {
         Listeners.addListener(MouseCapturedListener.class, new CorrectCameraOnCapture());
+
         Listeners.addListener(MouseMovementListener.class, new OnGuiHover());
         Listeners.addListener(MouseButtonListener.class, new OnGuiClick());
-        Listeners.addListener(MouseScrollListener.class, new RunSpeedListener());
+        Listeners.addListener(MouseButtonListener.class, new OnTerrainClick());
+
     }
 
     public static void fixMousePos() {
