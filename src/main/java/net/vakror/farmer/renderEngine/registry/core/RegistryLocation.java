@@ -6,9 +6,6 @@ public class RegistryLocation {
     String path;
 
     public RegistryLocation(String path) {
-        if (path.matches("[a-z0-9_]")) {
-            throw new IllegalArgumentException(String.format("Path %s contains illegal character", path));
-        }
         this.path = "src/main/resources/assets/" + path;
     }
 

@@ -14,25 +14,12 @@ import java.util.List;
 //TODO: add option groups and a gui
 public class Options {
 
-    public static boolean useSpecularLighting() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("useSpecularLighting")).getAsBooleanOption().value();
-    }
-
-    public static boolean useAmbientLight() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("ambientLight")).getAsBooleanOption().value();
-    }
-
-
     public static float ambientLight() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("ambientLight")).getAsFloatOption().value();
     }
 
     public static float fov() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("fov")).getAsFloatOption().value();
-    }
-
-    public static FloatOption fovOption() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("fov")).getAsFloatOption();
     }
 
     public static float nearPlane() {
@@ -43,36 +30,12 @@ public class Options {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("farPlane")).getAsFloatOption().value();
     }
 
-    public static float fogDensity() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("fogDensity")).getAsFloatOption().value();
-    }
-
-    public static float fogGradient() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("fogGradient")).getAsFloatOption().value();
-    }
-
     public static Vector3f skyColor() {
         return ((Vector3fOption) DefaultRegistries.OPTIONS.get(new RegistryLocation("skyColor"))).value();
     }
 
-    public static float runSpeed() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("runSpeed")).getAsFloatOption().value();
-    }
-
     public static float mipmap() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("mipMapLevel")).getAsFloatOption().value();
-    }
-
-    public static float turnSpeed() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("turnSpeed")).getAsFloatOption().value();
-    }
-
-    public static float gravity() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("gravity")).getAsFloatOption().value();
-    }
-
-    public static float jumpPower() {
-        return DefaultRegistries.OPTIONS.get(new RegistryLocation("jumpPower")).getAsFloatOption().value();
     }
 
     public static float sensitivity() {
@@ -81,6 +44,10 @@ public class Options {
 
     public static float scrollSensitivity() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("scrollSensitivity")).getAsFloatOption().value();
+    }
+
+    public static boolean startWithMouseCaptured() {
+        return DefaultRegistries.OPTIONS.get(new RegistryLocation("startWithMouseCaptured")).getAsBooleanOption().value();
     }
 
     public static void save() {

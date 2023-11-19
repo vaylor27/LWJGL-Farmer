@@ -1,16 +1,18 @@
 package net.vakror.farmer;
 
-import net.vakror.farmer.renderEngine.Loader;
-import net.vakror.farmer.renderEngine.MasterRenderer;
-import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.entity.Camera;
+import net.vakror.farmer.renderEngine.*;
+import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
-import net.vakror.farmer.renderEngine.entity.Player;
 import net.vakror.farmer.renderEngine.gui.GuiRenderer;
 import net.vakror.farmer.renderEngine.gui.GuiTexture;
+import net.vakror.farmer.renderEngine.gui.ResetPositionGui;
+import net.vakror.farmer.renderEngine.listener.*;
+import net.vakror.farmer.renderEngine.listeners.*;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
+import net.vakror.farmer.renderEngine.mouse.InputUtil;
+import net.vakror.farmer.renderEngine.mouse.MousePicker;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
 import net.vakror.farmer.renderEngine.util.OBJLoader;
@@ -22,21 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static org.lwjgl.glfw.GLFW.*;
+
+
 public class DevTesting {
-    public static Light light;
-    public static Terrain terrain;
+    public static Terrain terrain = new Terrain(0, 0, FarmerGameMain.loader, new ModelTexture(FarmerGameMain.loader.loadTexture(new ResourcePath("grass")), 1, 0, false, false), new ResourcePath("heightmap"));
     public static List<Entity> entities = new ArrayList<>();
     public static List<GuiTexture> guis = new ArrayList<>();
     public static GuiRenderer guiRenderer;
     public static List<Light> lights = new ArrayList<>();
 
+    public static Entity tree;
+
     public static void runTest(Loader loader) {
-
-
-        RawModel bunnyModel = OBJLoader.loadOBJ(new ResourcePath("stanfordBunny"), loader);
-        TexturedModel stanfordBunny = new TexturedModel(bunnyModel, new ModelTexture(loader.loadTexture(new ResourcePath("white"))));
-
-        FarmerGameMain.player = new Player(stanfordBunny, new Vector3f(100, 0, -50), 0, 0, 0, 1);
 
         lights.add(new Light(new Vector3f(0, 1000, -1000), new Vector3f(1, 1, 1), new Vector3f(1, 0, 0)));
         lights.add(new Light(new Vector3f(185, 10, 293), new Vector3f(2, 0, 0), new Vector3f(1, 0.01f, 0.002f)));
@@ -44,33 +44,42 @@ public class DevTesting {
         lights.add(new Light(new Vector3f(293, 7, 305), new Vector3f(2, 2, 0), new Vector3f(1, 0.01f, 0.002f)));
 
 
-        terrain = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture(new ResourcePath("grass")), 1, 0, false, false), new ResourcePath("heightmap"));
+
+        RawModel model = OBJLoader.loadOBJ(new ResourcePath("tree"), loader);
+        ModelTexture texture = new ModelTexture(loader.loadTexture(new ResourcePath("tree")), 1, 0, false, true);
+        TexturedModel staticModel = new TexturedModel(model, texture);
+        tree = new Entity(staticModel, new Vector3f(0, 0, 0), 0, 0, 0, 50);
 
         generateObjects(loader);
-        FarmerGameMain.camera = new Camera(FarmerGameMain.player);
 
-//        GuiTexture gui = new GuiTexture(loader.loadTexture(new ResourcePath("test")), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-//        GuiTexture gui1 = new GuiTexture(loader.loadTexture(new ResourcePath("test")), new Vector2f(0.45f, 0.75f), new Vector2f(0.25f, 0.25f));
-//        guis.add(gui);
+        GuiTexture gui = new ResetPositionGui(loader.loadTexture(new ResourcePath("test")), loader.loadTexture(new ResourcePath("image")), new Vector2f(0.25f, 0.25f), new Vector2f(0.5f, 0.25f));
+//        GuiTexture gui1 = new SelfDestructingGuiTexture(loader.loadTexture(new ResourcePath("test")), new Vector2f(0.45f, 0.75f), new Vector2f(16, 16), new Vector2f(0.25f, 0.25f));
+        guis.add(gui);
 //        guis.add(gui1);
 
         guiRenderer = new GuiRenderer(loader);
 
-        FarmerGameMain.renderer = new MasterRenderer();
+        Listeners.addListener(InitializeListener.class, new OnInit());
+        Listeners.getListeners(InitializeListener.class).forEach(InitializeListener::onInit);
     }
 
     public static void tick() {
-        FarmerGameMain.player.move(terrain);
         FarmerGameMain.camera.tick();
         //game logic
-        FarmerGameMain.renderer.processEntity(FarmerGameMain.player);
+        FarmerGameMain.picker.update();
+        Vector3f terrainPoint = FarmerGameMain.picker.getCurrentTerrainPoint();
+        if (terrainPoint != null) {
+            tree.setPosition(terrainPoint);
+        }
+        entities.add(tree);
+//        System.out.println(FarmerGameMain.picker.getCurrentRay().x + ", " + FarmerGameMain.picker.getCurrentRay().y + ", " + FarmerGameMain.picker.getCurrentRay().z);
         for (Entity cube : entities) {
             FarmerGameMain.renderer.processEntity(cube);
         }
-        FarmerGameMain.renderer.processTerrain(terrain);
-        FarmerGameMain.renderer.render(lights, FarmerGameMain.camera);
+        FarmerGameMain.renderer.renderScene(entities, List.of(terrain), lights, FarmerGameMain.camera);
         guiRenderer.render(guis);
         Window.updateDisplay();
+        entities.remove(tree);
     }
 
     public static void generateObjects(Loader loader) {

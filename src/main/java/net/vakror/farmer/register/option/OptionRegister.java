@@ -15,17 +15,12 @@ public class OptionRegister {
         REGISTER.register("ambientLight", new FloatOption(0.2f));
         REGISTER.register("fov", new FloatOption(70));
         REGISTER.register("nearPlane", new FloatOption(0.1f));
-        REGISTER.register("farPlane", new FloatOption(1000));
-        REGISTER.register("fogDensity", new FloatOption(0.0035f));
-        REGISTER.register("fogGradient", new FloatOption(5f));
+        REGISTER.register("farPlane", new FloatOption(10000));
         REGISTER.register("skyColor", new Vector3fOption(0.5f, 0.5f, 0.5f));
-        REGISTER.register("runSpeed", new FloatOption(20));
-        REGISTER.register("turnSpeed", new FloatOption(160));
-        REGISTER.register("gravity", new FloatOption(50));
-        REGISTER.register("jumpPower", new FloatOption(30));
         REGISTER.register("mipMapLevel", new FloatOption(-0.4f));
         REGISTER.register("sensitivity", new FloatOption(100f));
         REGISTER.register("scrollSensitivity", new FloatOption(100f));
+        REGISTER.register("startWithMouseCaptured", new BooleanOption(false));
 
         Options.read();
     }

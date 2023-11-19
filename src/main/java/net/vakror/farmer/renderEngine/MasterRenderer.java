@@ -1,14 +1,13 @@
 package net.vakror.farmer.renderEngine;
 
 import net.vakror.farmer.Options;
-import net.vakror.farmer.renderEngine.entity.Camera;
+import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
-import net.vakror.farmer.renderEngine.shader.statiic.PerPixelStaticShader;
-import net.vakror.farmer.renderEngine.shader.terrain.PerPixelTerrainShader;
 import net.vakror.farmer.renderEngine.shader.statiic.SpecularStaticShader;
 import net.vakror.farmer.renderEngine.shader.terrain.SpecularTerrainShader;
+import net.vakror.farmer.renderEngine.skybox.SkyboxRenderer;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
@@ -24,20 +23,28 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class MasterRenderer {
 
-    private final PerPixelStaticShader entityShader = Options.useSpecularLighting() ? new SpecularStaticShader(): new PerPixelStaticShader();
+    private final SpecularStaticShader entityShader = new SpecularStaticShader();
     private EntityRenderer entityRenderer;
 
     private final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
     private final List<Terrain> terrains = new ArrayList<>();
 
     private TerrainRenderer terrainRenderer;
-    private final PerPixelTerrainShader terrainShader = Options.useSpecularLighting() ? new SpecularTerrainShader(): new PerPixelTerrainShader();
+    private final SpecularTerrainShader terrainShader = new SpecularTerrainShader();
 
-    public MasterRenderer() {
+    private final SkyboxRenderer skyboxRenderer;
+    private final Matrix4f projectionMatrix;
+
+    public MasterRenderer(Loader loader) {
         enableCulling();
-        Matrix4f projectionMatrix = Mth.createProjectionMatrix();
+        projectionMatrix = Mth.createProjectionMatrix();
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+        skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+    }
+
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
     }
 
     public void regenProjectionMatrix() {
@@ -55,10 +62,28 @@ public class MasterRenderer {
         glDisable(GL_CULL_FACE);
     }
 
+    public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera) {
+        for (Terrain terrain : terrains) {
+            processTerrain(terrain);
+        }
+        for (Entity entity : entities) {
+            processEntity(entity);
+        }
+        render(lights, camera);
+    }
+
     public void render(List<Light> lights, Camera camera) {
         prepare();
+
+        renderSkybox(camera);
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_DEPTH_BUFFER_BIT);
         renderEntities(lights, camera);
         renderTerrain(lights, camera);
+    }
+
+    private void renderSkybox(Camera camera) {
+        skyboxRenderer.render(camera);
     }
 
     private void renderEntities(List<Light> lights, Camera camera) {

@@ -145,6 +145,4 @@ public abstract class ShaderProgram {
 	public void loadOffset(float x, float y) {}
 
 	public void loadFakeLighting(boolean useFakeLighting) {}
-
-	public void loadFog(float density, float gradient) {}
 }

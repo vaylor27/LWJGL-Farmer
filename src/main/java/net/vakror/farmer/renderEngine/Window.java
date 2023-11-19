@@ -49,7 +49,6 @@ public class Window {
         }
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, Window::executeKey);
 
 
 
@@ -62,23 +61,9 @@ public class Window {
         // Make the window visible
         glfwShowWindow(window);
 
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
         lastFrameTime = getCurrentTime();
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
-
-    private static void executeKey(long window, int key, int scancode, int action, int mods) {
-        DefaultRegistries.KEYBINDINGS.forEach((keyBinding -> {
-            if (keyBinding.key == key) {
-                keyBinding.execute(scancode, action, mods);
-            }
-        }));
-    }
 
     public static void closeDisplay() {
         glfwDestroyWindow(window);

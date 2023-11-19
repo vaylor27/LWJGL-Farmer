@@ -13,19 +13,15 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Terrain {
-    private static final float SIZE = 800;
+    private static final float SIZE = 1000;
     private static final int MAX_HEIGHT = 40;
-    private static final int MIN_HEIGHT = -40;
     private static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
 
 
-    private float x;
-    private float z;
+    public float x;
+    public float z;
     private RawModel model;
     private ModelTexture texture;
 
@@ -81,7 +77,7 @@ public class Terrain {
 
     private RawModel generateTerrain(Loader loader, ResourcePath heightMap) {
 
-        BufferedImage image = null;
+        BufferedImage image;
         try {
             image = ImageIO.read(new File(heightMap.getImagePath()));
         } catch (IOException e) {

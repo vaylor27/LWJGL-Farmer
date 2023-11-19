@@ -1,6 +1,6 @@
 package net.vakror.farmer.renderEngine;
 
-import net.vakror.farmer.renderEngine.shader.terrain.PerPixelTerrainShader;
+import net.vakror.farmer.renderEngine.shader.terrain.SpecularTerrainShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TerrainRenderer extends AbstractRenderer{
 
-    public TerrainRenderer(PerPixelTerrainShader shader, Matrix4f projectionMatrix) {
+    public TerrainRenderer(SpecularTerrainShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;
         shader.start();
         shader.loadProjection(projectionMatrix);
@@ -27,6 +27,6 @@ public class TerrainRenderer extends AbstractRenderer{
 
     private void loadModelMatrix(Terrain terrain) {
         Matrix4f transformationMatrix = Mth.createTransformationMatrix(terrain);
-        ((PerPixelTerrainShader) shader).loadTransformationMatrix(transformationMatrix);
+        ((SpecularTerrainShader) shader).loadTransformationMatrix(transformationMatrix);
     }
 }

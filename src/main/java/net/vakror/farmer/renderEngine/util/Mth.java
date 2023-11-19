@@ -2,7 +2,7 @@ package net.vakror.farmer.renderEngine.util;
 
 import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.entity.Camera;
+import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import org.joml.Matrix4f;

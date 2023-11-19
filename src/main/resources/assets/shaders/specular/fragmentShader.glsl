@@ -1,10 +1,9 @@
-#version 330
+#version 410
 
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector[5];
 in vec3 toCameraVector;
-in float visibility;
 
 out vec4 out_Color;
 
@@ -17,9 +16,6 @@ uniform float ambientLight;
 uniform vec3 skyColor;
 
 void main(void){
-	if (visibility <= 0) {
-		discard;
-	}
 
 	vec4 textureColor = texture(textureSampler, pass_textureCoords);
 	if (textureColor.a < 0.5) {
@@ -50,5 +46,4 @@ void main(void){
 	totalDiffuse = max(totalDiffuse, ambientLight);
 
 	out_Color = vec4(totalDiffuse, 1.0) * textureColor + vec4(totalSpecular, 1.0);
-	out_Color = mix(vec4(skyColor, 1.0), out_Color, visibility);
 }
