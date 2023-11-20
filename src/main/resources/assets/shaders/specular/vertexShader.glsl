@@ -19,9 +19,14 @@ uniform float useFakeLighting;
 uniform float numberOfRows;
 uniform vec2 offset;
 
-void main(void){
+uniform vec4 plane;
+
+void main(void) {
 
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+
+	gl_ClipDistance[0] = dot(worldPosition, plane);
+
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	pass_textureCoords = (textureCoords/numberOfRows) + offset;

@@ -140,4 +140,8 @@ public class Camera {
     public void setData(CameraData lastCameraData) {
         this.data = lastCameraData;
     }
+
+    public void invertPitch() {
+        this.data.pitch = -data.pitch;
+    }
 }

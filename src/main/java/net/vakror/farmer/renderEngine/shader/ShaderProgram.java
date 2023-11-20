@@ -9,6 +9,7 @@ import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -43,6 +44,14 @@ public abstract class ShaderProgram {
 
 	protected void loadFloat(int location, float value) {
 		GL20.glUniform1f(location, value);
+	}
+
+	protected void loadInt(int location, int value) {
+		GL20.glUniform1i(location, value);
+	}
+
+	protected void loadVector4(int location, Vector4f vector) {
+		GL20.glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
 	}
 
 	protected void loadVector3(int location, Vector3f vector) {
@@ -145,4 +154,5 @@ public abstract class ShaderProgram {
 	public void loadOffset(float x, float y) {}
 
 	public void loadFakeLighting(boolean useFakeLighting) {}
+
 }

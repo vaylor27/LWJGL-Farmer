@@ -7,6 +7,7 @@ import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class SpecularTerrainShader extends ShaderProgram {
 	private int skyColorLocation;
 	private int shineDamperLocation;
 	private int reflectivityLocation;
+	private int planeLocation;
 
 	public SpecularTerrainShader() {
 		super(new ResourcePath("specular/terrain/vertexShader"), new ResourcePath("specular/terrain/fragmentShader"));
@@ -37,6 +39,7 @@ public class SpecularTerrainShader extends ShaderProgram {
 		ambientLightLocation = super.getUniformLocation("ambientLight");
 		useFakeLightingLocation = super.getUniformLocation("useFakeLighting");
 		skyColorLocation = super.getUniformLocation("skyColor");
+		planeLocation = super.getUniformLocation("plane");
 
 		lightPositionLocation = new int[MAX_LIGHTS];
 		lightColorLocation = new int[MAX_LIGHTS];
@@ -48,6 +51,10 @@ public class SpecularTerrainShader extends ShaderProgram {
 		}
 		shineDamperLocation = super.getUniformLocation("shineDamper");
 		reflectivityLocation = super.getUniformLocation("reflectivity");
+	}
+
+	public void loadClipPlane(Vector4f plane) {
+		super.loadVector4(planeLocation, plane);
 	}
 
 	@Override

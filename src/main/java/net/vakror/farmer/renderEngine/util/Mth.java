@@ -35,7 +35,7 @@ public class Mth {
         return createTransformationMatrix(new Vector3f(terrain.getX(), 0, terrain.getZ()), 0, 0, 0, 1);
     }
 
-    private static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
+    public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale) {
         Matrix4f matrix = new Matrix4f();
         matrix.identity();
         matrix.translate(translation);

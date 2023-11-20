@@ -1,6 +1,7 @@
-package net.vakror.farmer.renderEngine.gui;
+package net.vakror.farmer.renderEngine.renderer;
 
 import net.vakror.farmer.renderEngine.Loader;
+import net.vakror.farmer.renderEngine.gui.GuiTexture;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.shader.gui.GuiShader;
 import net.vakror.farmer.renderEngine.util.Mth;

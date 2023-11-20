@@ -1,6 +1,5 @@
 package net.vakror.farmer.renderEngine.mouse;
 
-import net.vakror.farmer.DevTesting;
 import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.gui.GuiTexture;
 import net.vakror.farmer.renderEngine.listener.*;
@@ -12,6 +11,7 @@ import org.lwjgl.glfw.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.vakror.farmer.FarmerGameMain.guis;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 
@@ -86,7 +86,6 @@ public class InputUtil {
         glfwSetInputMode(Window.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         glfwSetCursorPos(Window.window, InputUtil.previousCapturedPos.getAsScreenCoords().x, InputUtil.previousCapturedPos.getAsScreenCoords().y);
         Listeners.getListeners(MouseCapturedListener.class).forEach(MouseCapturedListener::onCaptured);
-        DevTesting.guis.forEach(GuiTexture::unHover);
         isCursorDisabled = true;
     }
 

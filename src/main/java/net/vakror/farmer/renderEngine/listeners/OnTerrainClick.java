@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFW;
 public class OnTerrainClick implements MouseButtonListener {
     @Override
     public void onClick(long window, int button, int action) {
-        if (!InputUtil.isHoveringOverGui) {
+        if (!InputUtil.isHoveringOverGui && !InputUtil.isCursorDisabled) {
             if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_PRESS) {
                 Vector3f terrainPoint = FarmerGameMain.picker.getCurrentTerrainPoint();
                 if (terrainPoint != null && terrainPoint.x > 0 && terrainPoint.x < Terrain.SIZE && terrainPoint.z > 0 && terrainPoint.z < Terrain.SIZE) {

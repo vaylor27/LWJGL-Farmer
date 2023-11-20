@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine;
+package net.vakror.farmer.renderEngine.renderer;
 
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.model.TexturedModel;

@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine.skybox;
+package net.vakror.farmer.renderEngine.renderer;
 
 import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.camera.Camera;

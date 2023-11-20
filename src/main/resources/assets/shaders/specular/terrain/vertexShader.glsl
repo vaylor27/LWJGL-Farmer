@@ -16,9 +16,14 @@ uniform vec3 lightPosition[5];
 
 uniform float useFakeLighting;
 
+uniform vec4 plane;
+
 void main(void){
 
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+
+	gl_ClipDistance[0] = dot(worldPosition, plane);
+
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	pass_textureCoords = textureCoords * 40.0;
