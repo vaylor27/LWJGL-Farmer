@@ -118,4 +118,5 @@ dependencies {
 
 
     implementation("com.google.guava:guava:24.0-jre")
+    implementation 'net.harawata:appdirs:1.2.2'
 }

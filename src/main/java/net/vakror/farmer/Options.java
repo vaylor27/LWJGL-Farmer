@@ -51,7 +51,7 @@ public class Options {
     }
 
     public static void save() {
-        File file = new File("options.txt");
+        File file = new File(FarmerGameMain.appDirPath + "/options.txt");
         try(StringWriter writer = new StringWriter()) {
             file.delete();
             file.createNewFile();
@@ -71,8 +71,9 @@ public class Options {
 
     public static void read() {
         try {
-            File file = new File("options.txt");
+            File file = new File(FarmerGameMain.appDirPath + "/options.txt");
             if (!file.exists()) {
+                file.getParentFile().mkdirs();
                 file.createNewFile();
             }
             List<String> lines = Files.readAllLines(file.toPath());

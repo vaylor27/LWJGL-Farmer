@@ -33,4 +33,10 @@ public class CameraData {
     public float getYaw() {
         return yaw;
     }
+
+    public void set(CameraData lastCameraData) {
+        this.angleAroundFocused = lastCameraData.angleAroundFocused;
+        this.pitch = lastCameraData.pitch;
+        this.yaw = lastCameraData.yaw;
+    }
 }

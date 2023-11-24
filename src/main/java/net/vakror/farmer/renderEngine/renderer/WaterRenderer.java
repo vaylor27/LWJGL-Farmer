@@ -2,6 +2,7 @@ package net.vakror.farmer.renderEngine.renderer;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 
 
 import net.vakror.farmer.Options;
@@ -27,14 +28,14 @@ public class WaterRenderer {
 
 	private RawModel quad;
 	private final WaterShader shader;
-	private final WaterFrameBuffers fbos;
+	private final Map<Float, WaterFrameBuffers> fbos;
 	private final int dudvTexture;
 	private final int waterNormalMapTexture;
 
 	private static final float MOVE_SPEED = 0.03f;
 	private float moveFactor = 0;
 
-	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers fbos) {
+	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, Map<Float, WaterFrameBuffers> fbos) {
 		this.shader = shader;
 		this.fbos = fbos;
 		dudvTexture = loader.loadTexture(new ResourcePath("dudv"));
@@ -46,19 +47,17 @@ public class WaterRenderer {
 		setUpVAO(loader);
 	}
 
-	public void render(List<WaterTile> water, Camera camera) {
-		prepareRender(camera);	
-		for (WaterTile tile : water) {
-			Matrix4f modelMatrix = Mth.createTransformationMatrix(
-					new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
-					WaterTile.TILE_SIZE);
-			shader.loadModelMatrix(modelMatrix);
-			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
-		}
+	public void render(WaterTile tile, Camera camera) {
+		prepareRender(camera, tile);
+		Matrix4f modelMatrix = Mth.createTransformationMatrix(
+				new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
+				WaterTile.TILE_SIZE);
+		shader.loadModelMatrix(modelMatrix);
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera){
+	private void prepareRender(Camera camera, WaterTile waterTile) {
 		shader.start();
 		shader.loadViewMatrix(camera);
 		moveFactor += MOVE_SPEED * Window.getFrameTimeSeconds();
@@ -69,15 +68,15 @@ public class WaterRenderer {
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getReflectionTexture());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.get(waterTile.getHeight()).getReflectionTexture());
 		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionTexture());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.get(waterTile.getHeight()).getRefractionTexture());
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
 		GL13.glActiveTexture(GL13.GL_TEXTURE3);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterNormalMapTexture);
 		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.get(waterTile.getHeight()).getRefractionDepthTexture());
 
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

@@ -15,6 +15,7 @@ import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
 import net.vakror.farmer.renderEngine.util.OBJLoader;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
+import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;
 import net.vakror.farmer.renderEngine.water.WaterTile;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -41,7 +42,12 @@ public class OnInit implements InitializeListener {
     }
 
     private void setupWater() {
-        waterTiles.add(new WaterTile(Terrain.SIZE / 2, Terrain.SIZE / 2, -2f));
+        addWater(new WaterTile(Terrain.SIZE / 2, Terrain.SIZE / 2, -2f));
+    }
+
+    public static void addWater(WaterTile tile) {
+        waterTiles.add(tile);
+        fbos.computeIfAbsent(tile.getHeight(), WaterFrameBuffers::new);
     }
 
     private void setupObjects() {

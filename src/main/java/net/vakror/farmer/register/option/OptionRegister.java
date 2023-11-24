@@ -10,17 +10,15 @@ public class OptionRegister {
 
 
     public static void registerOptions() {
-        REGISTER.register("useSpecularLighting", new BooleanOption(true));
-        REGISTER.register("useAmbientLight", new BooleanOption(true));
-        REGISTER.register("ambientLight", new FloatOption(0.2f));
+        REGISTER.register("ambientLight", new FloatOption(0.1f));
         REGISTER.register("fov", new FloatOption(70));
-        REGISTER.register("nearPlane", new FloatOption(0.1f));
+        REGISTER.register("nearPlane", new FloatOption(5.0f));
         REGISTER.register("farPlane", new FloatOption(10000));
         REGISTER.register("skyColor", new Vector3fOption(0.5f, 0.5f, 0.5f));
         REGISTER.register("mipMapLevel", new FloatOption(-0.4f));
-        REGISTER.register("sensitivity", new FloatOption(100f));
+        REGISTER.register("sensitivity", new FloatOption(75f));
         REGISTER.register("scrollSensitivity", new FloatOption(100f));
-        REGISTER.register("startWithMouseCaptured", new BooleanOption(false));
+        REGISTER.register("startWithMouseCaptured", new BooleanOption(true));
 
         Options.read();
     }

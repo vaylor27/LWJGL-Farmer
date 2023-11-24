@@ -13,6 +13,7 @@ import net.vakror.farmer.renderEngine.shader.water.WaterShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;
+import net.vakror.farmer.renderEngine.water.WaterTile;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -46,7 +47,7 @@ public class MasterRenderer {
 
     public static GuiRenderer guiRenderer = new GuiRenderer(loader);
 
-    public MasterRenderer(Loader loader, WaterFrameBuffers fbos) {
+    public MasterRenderer(Loader loader, Map<Float, WaterFrameBuffers> fbos) {
         enableCulling();
         waterRenderer = new WaterRenderer(loader, waterShader, projectionMatrix, fbos);
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
@@ -93,8 +94,9 @@ public class MasterRenderer {
         renderTerrain(lights, camera, clipPlane);
 
         if (shouldRenderWaterAndGuis) {
-            waterRenderer.render(waterTiles, camera);
-
+            for (WaterTile tile: waterTiles) {
+                waterRenderer.render(tile, camera);
+            }
 
             glDisable(GL_DEPTH_TEST);
             glDepthMask(false);

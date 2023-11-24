@@ -1,5 +1,7 @@
 package net.vakror.farmer.renderEngine.util;
 
+import static net.vakror.farmer.FarmerGameMain.appDirPath;
+
 public class ResourcePath {
     private final String fileName;
 
@@ -8,14 +10,14 @@ public class ResourcePath {
     }
 
     public String getModelPath() {
-        return "src/main/resources/assets/models/" + fileName + ".obj";
+        return appDirPath + "/assets/models/" + fileName + ".obj";
     }
 
     public String getImagePath() {
-        return "src/main/resources/assets/textures/" + fileName + ".png";
+        return appDirPath + "/assets/textures/" + fileName + ".png";
     }
 
     public String getShaderPath() {
-        return "src/main/resources/assets/shaders/" + fileName + ".glsl";
+        return appDirPath + "/assets/shaders/" + fileName + ".glsl";
     }
 }

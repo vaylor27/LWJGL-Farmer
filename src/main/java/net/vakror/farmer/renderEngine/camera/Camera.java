@@ -14,7 +14,7 @@ import static net.vakror.farmer.renderEngine.mouse.InputUtil.yScrollValue;
 public class Camera {
     private float distanceFromFocused = 1000;
     private final Vector3f position = new Vector3f(0, 10, 0);
-    public CameraData data = CameraData.getDefault();
+    public final CameraData data = CameraData.getDefault();
     public static float lastValueY = 0;
     public static float lastValueX = 0;
 
@@ -138,7 +138,9 @@ public class Camera {
     }
 
     public void setData(CameraData lastCameraData) {
-        this.data = lastCameraData;
+        if (lastCameraData != null) {
+            this.data.set(lastCameraData);
+        }
     }
 
     public void invertPitch() {

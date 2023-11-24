@@ -27,6 +27,11 @@ public class WaterFrameBuffers {
 		initialiseRefractionFrameBuffer();
 	}
 
+	public WaterFrameBuffers(float height) { //call when loading the game
+		initialiseReflectionFrameBuffer();
+		initialiseRefractionFrameBuffer();
+	}
+
 	public void cleanUp() { //call when closing the game
 		GL30.glDeleteFramebuffers(reflectionFrameBuffer);
 		GL11.glDeleteTextures(reflectionTexture);
@@ -47,7 +52,7 @@ public class WaterFrameBuffers {
 		bindFrameBuffer(refractionFrameBuffer,screenWidth[0] * 2, screenHeight[0] * 2);
 	}
 	
-	public void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
+	public static void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
 		int[] screenWidth = new int[1];
 		int[] screenHeight = new int[1];
 		GLFW.glfwGetWindowSize(Window.window, screenWidth, screenHeight);
