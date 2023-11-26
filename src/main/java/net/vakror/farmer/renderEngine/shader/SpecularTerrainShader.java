@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine.shader.statiic;
+package net.vakror.farmer.renderEngine.shader;
 
 import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Light;
@@ -6,13 +6,12 @@ import net.vakror.farmer.renderEngine.shader.ShaderProgram;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.List;
 
-public class SpecularStaticShader extends ShaderProgram {
+public class SpecularTerrainShader extends ShaderProgram {
 	private static final int MAX_LIGHTS = 5;
 
 	private int transformationMatrixLocation;
@@ -24,14 +23,12 @@ public class SpecularStaticShader extends ShaderProgram {
 	private int ambientLightLocation;
 	private int useFakeLightingLocation;
 	private int skyColorLocation;
-	private int numberOfRowsLocation;
-	private int offsetLocation;
 	private int shineDamperLocation;
 	private int reflectivityLocation;
 	private int planeLocation;
 
-	public SpecularStaticShader() {
-		super(new ResourcePath("specular/vertexShader"), new ResourcePath("specular/fragmentShader"));
+	public SpecularTerrainShader() {
+		super(new ResourcePath("specular/terrain/vertexShader"), new ResourcePath("specular/terrain/fragmentShader"));
 	}
 
 	@Override
@@ -42,8 +39,6 @@ public class SpecularStaticShader extends ShaderProgram {
 		ambientLightLocation = super.getUniformLocation("ambientLight");
 		useFakeLightingLocation = super.getUniformLocation("useFakeLighting");
 		skyColorLocation = super.getUniformLocation("skyColor");
-		numberOfRowsLocation = super.getUniformLocation("numberOfRows");
-		offsetLocation = super.getUniformLocation("offset");
 		planeLocation = super.getUniformLocation("plane");
 
 		lightPositionLocation = new int[MAX_LIGHTS];
@@ -69,25 +64,16 @@ public class SpecularStaticShader extends ShaderProgram {
 	}
 
 	@Override
-	public void loadNumberOfRows(int numberOfRows) {
-		super.loadFloat(numberOfRowsLocation, numberOfRows);
-	}
-
-	@Override
-	public void loadOffset(float x, float y) {
-		super.loadVector2(offsetLocation, new Vector2f(x, y));
+	protected void bindAttributes() {
+		super.bindAttribute(0, "position");
+		super.bindAttribute(1, "textureCoords");
+		super.bindAttribute(2, "normal");
 	}
 
 	public void loadSkyColor(Vector3f skyColor) {
 		super.loadVector3(skyColorLocation, skyColor);
 	}
 
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
-		super.bindAttribute(1, "textureCoords");
-		super.bindAttribute(2, "normal");
-	}
 
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(transformationMatrixLocation, matrix);

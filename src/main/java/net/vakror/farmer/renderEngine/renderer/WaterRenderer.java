@@ -1,7 +1,5 @@
 package net.vakror.farmer.renderEngine.renderer;
 
-import java.awt.*;
-import java.util.List;
 import java.util.Map;
 
 
@@ -10,7 +8,7 @@ import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.model.RawModel;
-import net.vakror.farmer.renderEngine.shader.water.WaterShader;
+import net.vakror.farmer.renderEngine.shader.WaterShader;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;

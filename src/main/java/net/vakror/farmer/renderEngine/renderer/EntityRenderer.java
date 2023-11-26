@@ -2,7 +2,7 @@ package net.vakror.farmer.renderEngine.renderer;
 
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
-import net.vakror.farmer.renderEngine.shader.statiic.SpecularStaticShader;
+import net.vakror.farmer.renderEngine.shader.SpecularStaticShader;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
 

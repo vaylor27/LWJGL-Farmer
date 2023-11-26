@@ -2,17 +2,14 @@ package net.vakror.farmer.renderEngine.water;
 
 import java.nio.ByteBuffer;
 
-import net.vakror.farmer.renderEngine.Window;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
+import net.vakror.farmer.renderEngine.listener.WindowResizeListener;
+import net.vakror.farmer.renderEngine.mouse.InputUtil;
+import org.lwjgl.opengl.*;
 
-public class WaterFrameBuffers {
+import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
+import static org.lwjgl.opengl.GL11.glGetIntegerv;
 
-	protected static final int REFLECTION_WIDTH = 320;
-	private static final int REFLECTION_HEIGHT = 180;
+public class WaterFrameBuffers implements WindowResizeListener {
 
 	private int reflectionFrameBuffer;
 	private int reflectionTexture;
@@ -22,12 +19,13 @@ public class WaterFrameBuffers {
 	private int refractionTexture;
 	private int refractionDepthTexture;
 
-	public WaterFrameBuffers() { //call when loading the game
+	public WaterFrameBuffers(float height) { //call when loading the game; argument is only here to make java happy
 		initialiseReflectionFrameBuffer();
 		initialiseRefractionFrameBuffer();
 	}
 
-	public WaterFrameBuffers(float height) { //call when loading the game
+	@Override
+	public void onWindowResize(int width, int height) {
 		initialiseReflectionFrameBuffer();
 		initialiseRefractionFrameBuffer();
 	}
@@ -42,22 +40,18 @@ public class WaterFrameBuffers {
 	}
 
 	public void bindReflectionFrameBuffer() {//call before rendering to this FBO
-		bindFrameBuffer(reflectionFrameBuffer,REFLECTION_WIDTH,REFLECTION_HEIGHT);
+		bindFrameBuffer(reflectionFrameBuffer, InputUtil.getWindowWidth() / 4, InputUtil.getWindowHeight() / 4);
 	}
 	
 	public void bindRefractionFrameBuffer() {//call before rendering to this FBO
-		int[] screenWidth = new int[1];
-		int[] screenHeight = new int[1];
-		GLFW.glfwGetWindowSize(Window.window, screenWidth, screenHeight);
-		bindFrameBuffer(refractionFrameBuffer,screenWidth[0] * 2, screenHeight[0] * 2);
+		bindFrameBuffer(refractionFrameBuffer, InputUtil.getWindowWidth(), InputUtil.getWindowHeight());
 	}
 	
 	public static void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
-		int[] screenWidth = new int[1];
-		int[] screenHeight = new int[1];
-		GLFW.glfwGetWindowSize(Window.window, screenWidth, screenHeight);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-		GL11.glViewport(0, 0, screenWidth[0] * 2, screenHeight[0] * 2);
+		int[] vp = new int[4];
+		glGetIntegerv(GL_VIEWPORT, vp);
+		GL11.glViewport(vp[0], vp[1], vp[2], vp[3]);
 	}
 
 	public int getReflectionTexture() {//get the resulting texture
@@ -74,18 +68,17 @@ public class WaterFrameBuffers {
 
 	private void initialiseReflectionFrameBuffer() {
 		reflectionFrameBuffer = createFrameBuffer();
-		reflectionTexture = createTextureAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-		reflectionDepthBuffer = createDepthBufferAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+		reflectionTexture = createTextureAttachment(InputUtil.getWindowWidth() / 4, InputUtil.getWindowHeight() / 4);
+		reflectionDepthBuffer = createDepthBufferAttachment(InputUtil.getWindowWidth() / 4, InputUtil.getWindowHeight() / 4);
 		unbindCurrentFrameBuffer();
 	}
 	
 	private void initialiseRefractionFrameBuffer() {
-		int[] screenWidth = new int[1];
-		int[] screenHeight = new int[1];
-		GLFW.glfwGetWindowSize(Window.window, screenWidth, screenHeight);
+		int screenWidth = InputUtil.getWindowWidth();
+		int screenHeight = InputUtil.getWindowHeight();
 		refractionFrameBuffer = createFrameBuffer();
-		refractionTexture = createTextureAttachment(screenWidth[0] * 2, screenHeight[0] * 2);
-		refractionDepthTexture = createDepthTextureAttachment(screenWidth[0] * 2, screenHeight[0] * 2);
+		refractionTexture = createTextureAttachment(screenWidth, screenHeight);
+		refractionDepthTexture = createDepthTextureAttachment(screenWidth, screenHeight);
 		unbindCurrentFrameBuffer();
 	}
 	
@@ -138,5 +131,4 @@ public class WaterFrameBuffers {
 				GL30.GL_RENDERBUFFER, depthBuffer);
 		return depthBuffer;
 	}
-
 }

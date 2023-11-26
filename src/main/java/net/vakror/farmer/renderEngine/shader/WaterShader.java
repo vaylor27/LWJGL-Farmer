@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine.shader.water;
+package net.vakror.farmer.renderEngine.shader;
 
 
 import net.vakror.farmer.renderEngine.camera.Camera;

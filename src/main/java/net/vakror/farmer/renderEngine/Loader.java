@@ -35,6 +35,14 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
+	public int loadToVAO(float[] positions, float[] textureCoords){
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, 2, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		unbindVAO();
+		return vaoID;
+	}
+
 
 	public RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
@@ -82,6 +90,10 @@ public class Loader {
 	}
 
 	public int loadTexture(ResourcePath filePath) {
+		return loadTexture(filePath, true);
+	}
+
+	public int loadTexture(ResourcePath filePath, boolean respectMipmapOption) {
 		int textureId;
 		int width, height;
 		ByteBuffer image;
@@ -110,7 +122,7 @@ public class Loader {
 
 		GL30.glGenerateMipmap(GL_TEXTURE_2D);
 		GL11.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		GL11.glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, Options.mipmap());
+		GL11.glTexParameterf(GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, respectMipmapOption ? Options.mipmap(): 0);
 		return textureId;
 	}
 	

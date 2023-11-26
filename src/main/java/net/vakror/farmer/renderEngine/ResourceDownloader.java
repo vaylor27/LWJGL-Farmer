@@ -1,5 +1,10 @@
 package net.vakror.farmer.renderEngine;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.vakror.farmer.FarmerGameMain;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Objects;
@@ -16,7 +21,7 @@ public class ResourceDownloader {
         File appDir = new File(appDirPath);
         if (doesNeedToDownloadResources()) {
             if (appDir.exists()) {
-                appDir.delete();
+                deleteDirectory(appDir);
             }
             appDir.mkdirs();
             downloadAssets(appDir);
@@ -24,14 +29,60 @@ public class ResourceDownloader {
         }
     }
 
+    /**
+     * Force deletion of directory
+     */
+    static public boolean deleteDirectory(File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            assert files != null;
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        return (path.delete());
+    }
+
     private static void renameDownloadedAssetsFolder(File appDirPath) {
         File file = new File(appDirPath, "Game-Assets-main");
-        file.renameTo(new File(appDirPath, "assets"));
+        File file1 = new File(appDirPath, "assets");
+        if (file1.exists()) {
+            file1.delete();
+        }
+        file.renameTo(file1);
     }
 
     public static boolean doesNeedToDownloadResources() {
         File appDir = new File(appDirPath);
-        return !appDir.exists() || !appDir.isDirectory() || Objects.requireNonNull(appDir.list()).length == 0;
+        return !appDir.exists() || !appDir.isDirectory() || Objects.requireNonNull(appDir.list()).length == 0 || !isCorrectAssetVersion();
+    }
+
+    private static boolean isCorrectAssetVersion() {
+        File assetInfoFile = new File(appDirPath, "assets/asset-info.json");
+        if (!assetInfoFile.exists()) {
+            return false;
+        }
+        try (FileReader reader = new FileReader(assetInfoFile)) {
+            JsonElement element = JsonParser.parseReader(reader);
+            if (!element.isJsonObject()) {
+                return false;
+            }
+            JsonObject assetInfo = element.getAsJsonObject();
+            if (!assetInfo.has("asset-version")) {
+                return false;
+            }
+            JsonElement assetVersion = assetInfo.get("asset-version");
+            if (!assetVersion.isJsonPrimitive() || !assetVersion.getAsJsonPrimitive().isNumber()) {
+                return false;
+            }
+            return assetVersion.getAsJsonPrimitive().getAsInt() == FarmerGameMain.assetVersion;
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private static void downloadAssets(File appDir) {

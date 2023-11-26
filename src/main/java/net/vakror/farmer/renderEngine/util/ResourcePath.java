@@ -20,4 +20,8 @@ public class ResourcePath {
     public String getShaderPath() {
         return appDirPath + "/assets/shaders/" + fileName + ".glsl";
     }
+
+    public String getFontPath() {
+        return appDirPath + "/assets/fonts/" + fileName + ".fnt";
+    }
 }

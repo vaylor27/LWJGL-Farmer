@@ -3,7 +3,7 @@ package net.vakror.farmer.renderEngine.renderer;
 import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.model.RawModel;
-import net.vakror.farmer.renderEngine.shader.skybox.SkyboxShader;
+import net.vakror.farmer.renderEngine.shader.SkyboxShader;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

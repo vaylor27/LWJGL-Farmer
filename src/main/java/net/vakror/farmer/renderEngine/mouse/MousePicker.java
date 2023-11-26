@@ -78,11 +78,8 @@ public class MousePicker {
     }
 
     private Vector3f getNormalisedDeviceCoordinates() {
-        int[] screenWidth = new int[1];
-        int[] screenHeight = new int[1];
-        GLFW.glfwGetWindowSize(Window.window, screenWidth, screenHeight);
-        float x = (2.0f * InputUtil.currentMousePos.getAsScreenCoords().x) / screenWidth[0] - 1.0f;
-        float y = 1.0f - (2.0f * InputUtil.currentMousePos.getAsScreenCoords().y) / screenHeight[0];
+        float x = (2.0f * InputUtil.currentMousePos.getAsScreenCoords().x) / InputUtil.getWindowWidth() - 1.0f;
+        float y = 1.0f - (2.0f * InputUtil.currentMousePos.getAsScreenCoords().y) / InputUtil.getWindowHeight();
         float z = 1.0f;
         return new Vector3f(x, y, z);
     }

@@ -14,22 +14,9 @@ project.ext.lwjgl3AwtVersion = "0.1.8"
 project.ext.steamworks4jVersion = "1.9.0"
 project.ext.steamworks4jServerVersion = "1.9.0"
 
-switch (OperatingSystem.current()) {
-    case OperatingSystem.LINUX:
-        def osArch = System.getProperty("os.arch")
-        project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
-                ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
-                : "natives-linux"
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = System.getProperty("os.arch").startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
-        break
-    case OperatingSystem.WINDOWS:
-        def osArch = System.getProperty("os.arch")
-        project.ext.lwjglNatives = osArch.contains("64")
-                ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
-                : "natives-windows-x86"
-        break
+
+ext {
+    list = new ArrayList<String>();
 }
 
 dependencies {
@@ -76,47 +63,86 @@ dependencies {
     implementation "org.lwjgl:lwjgl-xxhash"
     implementation "org.lwjgl:lwjgl-yoga"
     implementation "org.lwjgl:lwjgl-zstd"
-    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-freetype::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-harfbuzz::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-hwloc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-jemalloc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-ktx::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-libdivide::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-llvm::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-lmdb::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-lz4::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-meow::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-meshoptimizer::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-nfd::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengles::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-par::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-remotery::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-rpmalloc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-shaderc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-spvc::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-tinyexr::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-tinyfd::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-vma::$lwjglNatives"
-    if (lwjglNatives == "natives-macos" || lwjglNatives == "natives-macos-arm64") runtimeOnly "org.lwjgl:lwjgl-vulkan::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-xxhash::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-yoga::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-zstd::$lwjglNatives"
+
+    natives(OperatingSystem.LINUX, true, true);
+    natives(OperatingSystem.LINUX, true, false);
+    natives(OperatingSystem.LINUX, false, true);
+
+    natives(OperatingSystem.MAC_OS, true, true);
+    natives(OperatingSystem.MAC_OS, false, true);
+
+
+    natives(OperatingSystem.WINDOWS, true, true);
+    natives(OperatingSystem.WINDOWS, false, true);
+    natives(OperatingSystem.WINDOWS, false, false);
+
+    for (final def s in list) {
+        runtimeOnly("${s}")
+    }
+
     implementation "org.joml:joml:${jomlVersion}"
     implementation "org.lwjglx:lwjgl3-awt:${lwjgl3AwtVersion}"
     implementation "com.code-disaster.steamworks4j:steamworks4j:${steamworks4jVersion}"
     implementation "com.code-disaster.steamworks4j:steamworks4j-server:${steamworks4jServerVersion}"
-
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     implementation("com.google.guava:guava:24.0-jre")
     implementation 'net.harawata:appdirs:1.2.2'
+}
+
+
+def natives(OperatingSystem os, boolean arch, boolean is64) {
+    String natives = "";
+    switch (os) {
+        case OperatingSystem.LINUX:
+            natives = arch
+                    ? "natives-linux-${is64 ? "arm64" : "arm32"}"
+                    : "natives-linux"
+            break
+        case OperatingSystem.MAC_OS:
+            natives = arch ? "natives-macos-arm64" : "natives-macos"
+            break
+        case OperatingSystem.WINDOWS:
+            natives = is64
+                    ? "natives-windows${arch ? "-arm64" : ""}"
+                    : "natives-windows-x86"
+            break
+    }
+
+
+    list += ("org.lwjgl:lwjgl::" + natives)
+    list += ("org.lwjgl:lwjgl-assimp::" + natives)
+    if (natives != "natives-windows-arm64") list += ("org.lwjgl:lwjgl-bgfx::" + natives)
+    list += ("org.lwjgl:lwjgl-freetype::" + natives)
+    list += ("org.lwjgl:lwjgl-glfw::" + natives)
+    list += ("org.lwjgl:lwjgl-harfbuzz::" + natives)
+    list += ("org.lwjgl:lwjgl-hwloc::" + natives)
+    list += ("org.lwjgl:lwjgl-jemalloc::" + natives)
+    list += ("org.lwjgl:lwjgl-ktx::" + natives)
+    list += ("org.lwjgl:lwjgl-libdivide::" + natives)
+    list += ("org.lwjgl:lwjgl-llvm::" + natives)
+    list += ("org.lwjgl:lwjgl-lmdb::" + natives)
+    list += ("org.lwjgl:lwjgl-lz4::" + natives)
+    if (natives != "natives-linux-arm32") list += ("org.lwjgl:lwjgl-meow::" + natives)
+    list += ("org.lwjgl:lwjgl-meshoptimizer::" + natives)
+    list += ("org.lwjgl:lwjgl-nanovg::" + natives)
+    list += ("org.lwjgl:lwjgl-nfd::" + natives)
+    list += ("org.lwjgl:lwjgl-nuklear::" + natives)
+    list += ("org.lwjgl:lwjgl-openal::" + natives)
+    list += ("org.lwjgl:lwjgl-opengl::" + natives)
+    list += ("org.lwjgl:lwjgl-opengles::" + natives)
+    list += ("org.lwjgl:lwjgl-opus::" + natives)
+    list += ("org.lwjgl:lwjgl-par::" + natives)
+    if (natives != "natives-windows-arm64") list += ("org.lwjgl:lwjgl-remotery::" + natives)
+    list += ("org.lwjgl:lwjgl-rpmalloc::" + natives)
+    list += ("org.lwjgl:lwjgl-shaderc::" + natives)
+    list += ("org.lwjgl:lwjgl-spvc::" + natives)
+    list += ("org.lwjgl:lwjgl-stb::" + natives)
+    list += ("org.lwjgl:lwjgl-tinyexr::" + natives)
+    list += ("org.lwjgl:lwjgl-tinyfd::" + natives)
+    list += ("org.lwjgl:lwjgl-vma::" + natives)
+    if (natives == "natives-macos" || natives == "natives-macos-arm64") list += "org.lwjgl:lwjgl-vulkan::" + natives
+    list += ("org.lwjgl:lwjgl-xxhash::" + natives)
+    list += ("org.lwjgl:lwjgl-yoga::" + natives)
+    list += ("org.lwjgl:lwjgl-zstd::" + natives)
 }

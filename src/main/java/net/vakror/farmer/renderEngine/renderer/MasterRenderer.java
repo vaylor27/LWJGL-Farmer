@@ -1,15 +1,14 @@
 package net.vakror.farmer.renderEngine.renderer;
 
-import net.vakror.farmer.FarmerGameMain;
 import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
-import net.vakror.farmer.renderEngine.shader.statiic.SpecularStaticShader;
-import net.vakror.farmer.renderEngine.shader.terrain.SpecularTerrainShader;
-import net.vakror.farmer.renderEngine.shader.water.WaterShader;
+import net.vakror.farmer.renderEngine.shader.SpecularStaticShader;
+import net.vakror.farmer.renderEngine.shader.SpecularTerrainShader;
+import net.vakror.farmer.renderEngine.shader.WaterShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;

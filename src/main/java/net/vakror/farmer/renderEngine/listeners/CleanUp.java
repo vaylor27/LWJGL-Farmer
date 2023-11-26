@@ -1,6 +1,7 @@
 package net.vakror.farmer.renderEngine.listeners;
 
 import net.vakror.farmer.Options;
+import net.vakror.farmer.renderEngine.font.render.TextMaster;
 import net.vakror.farmer.renderEngine.listener.CloseGameListener;
 import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;
 
@@ -12,6 +13,7 @@ public class CleanUp implements CloseGameListener {
         fbos.values().forEach(WaterFrameBuffers::cleanUp);
         renderer.cleanUp();
         loader.cleanUp();
+        TextMaster.cleanUp();
 
         Options.save();
     }

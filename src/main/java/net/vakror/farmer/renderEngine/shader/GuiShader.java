@@ -1,4 +1,4 @@
-package net.vakror.farmer.renderEngine.shader.gui;
+package net.vakror.farmer.renderEngine.shader;
 
 import net.vakror.farmer.renderEngine.shader.ShaderProgram;
 import net.vakror.farmer.renderEngine.util.ResourcePath;

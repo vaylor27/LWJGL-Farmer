@@ -117,8 +117,13 @@ public class OnInit implements InitializeListener {
 
         Listeners.addListener(CloseGameListener.class, new CleanUp());
 
+        for (WaterFrameBuffers fbo : fbos.values()) {
+            Listeners.addListener(WindowResizeListener.class, fbo);
+        }
+
         Listeners.addListener(RenderListener.class, new ReflectionRefractionNormalSceneFrameBufferTextureRenderer());
         Listeners.addListener(RenderListener.class, new TickMouseAndCamera());
+        Listeners.addListener(RenderListener.class, new RenderText());
 
     }
 

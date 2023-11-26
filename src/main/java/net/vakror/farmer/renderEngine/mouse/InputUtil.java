@@ -1,7 +1,6 @@
 package net.vakror.farmer.renderEngine.mouse;
 
 import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.gui.GuiTexture;
 import net.vakror.farmer.renderEngine.listener.*;
 import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import org.joml.Vector2d;
@@ -11,7 +10,6 @@ import org.lwjgl.glfw.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.vakror.farmer.FarmerGameMain.guis;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 
@@ -19,6 +17,7 @@ public class InputUtil {
 
     static {
         GLFW.glfwSetScrollCallback(Window.window, GLFWScrollCallback.create(InputUtil::glfwScrollCallback));
+        GLFW.glfwSetFramebufferSizeCallback(Window.window, GLFWFramebufferSizeCallback.create(InputUtil::glfwWindowResizeCallback));
         GLFW.glfwSetCursorPosCallback(Window.window, GLFWCursorPosCallback.create(InputUtil::glfwCursorPos));
         GLFW.glfwSetMouseButtonCallback(Window.window, GLFWMouseButtonCallback.create(InputUtil::glfwClick));
         glfwSetKeyCallback(Window.window, InputUtil::onKeyPress);
@@ -41,6 +40,24 @@ public class InputUtil {
         yScrollValue = dy;
 
         Listeners.getListeners(MouseScrollListener.class).forEach((listener) -> listener.onScroll(windowID, dx, dy));
+    }
+
+    public static void glfwWindowResizeCallback(long windowId, int width, int height) {
+        Listeners.getListeners(WindowResizeListener.class).forEach(listener -> listener.onWindowResize(width, height));
+    }
+
+    public static int getWindowWidth() {
+        int[] width = new int[1];
+        int[] height = new int[1];
+        org.lwjgl.glfw.GLFW.glfwGetWindowSize(Window.window, width, height);
+        return width[0];
+    }
+
+    public static int getWindowHeight() {
+        int[] width = new int[1];
+        int[] height = new int[1];
+        org.lwjgl.glfw.GLFW.glfwGetWindowSize(Window.window, width, height);
+        return height[0];
     }
 
     public static void glfwClick(long window, int button, int action, int mods) {

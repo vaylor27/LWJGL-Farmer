@@ -1,6 +1,6 @@
 package net.vakror.farmer.renderEngine.renderer;
 
-import net.vakror.farmer.renderEngine.shader.terrain.SpecularTerrainShader;
+import net.vakror.farmer.renderEngine.shader.SpecularTerrainShader;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.Matrix4f;
