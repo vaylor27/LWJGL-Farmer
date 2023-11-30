@@ -6,10 +6,10 @@ public class CameraData {
     public float yaw;
 
 
-    public CameraData(Camera camera) {
-        angleAroundFocused = camera.data.angleAroundFocused;
-        pitch = camera.getPitch();
-        yaw = camera.getYaw();
+    public CameraData() {
+        angleAroundFocused = Camera.data.angleAroundFocused;
+        pitch = Camera.getPitch();
+        yaw = Camera.getYaw();
     }
 
     private CameraData(float angleAroundFocused, float pitch, float yaw) {
@@ -20,18 +20,6 @@ public class CameraData {
 
     public static CameraData getDefault() {
         return new CameraData(0, 20, 180);
-    }
-
-    public float getAngleAroundFocused() {
-        return angleAroundFocused;
-    }
-
-    public float getPitch() {
-        return pitch;
-    }
-
-    public float getYaw() {
-        return yaw;
     }
 
     public void set(CameraData lastCameraData) {

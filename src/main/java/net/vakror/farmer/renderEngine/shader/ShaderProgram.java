@@ -14,6 +14,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import static net.vakror.farmer.FarmerGameMain.LOGGER;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 public abstract class ShaderProgram {
@@ -33,45 +34,42 @@ public abstract class ShaderProgram {
 		bindAttributes();
 		GL20.glLinkProgram(programID);
 		GL20.glValidateProgram(programID);
-		getAllUniformLocations();
 	}
 
-	protected abstract void getAllUniformLocations();
-
-	protected int getUniformLocation(String uniformName) {
+	public int getUniformLocation(String uniformName) {
 		return GL20.glGetUniformLocation(programID, uniformName);
 	}
 
-	protected void loadFloat(int location, float value) {
-		GL20.glUniform1f(location, value);
+	public void loadFloat(String uniformName, float value) {
+		GL20.glUniform1f(getUniformLocation(uniformName), value);
 	}
 
-	protected void loadInt(int location, int value) {
-		GL20.glUniform1i(location, value);
+	public void loadInt(String uniformName, int value) {
+		GL20.glUniform1i(getUniformLocation(uniformName), value);
 	}
 
-	protected void loadVector4(int location, Vector4f vector) {
-		GL20.glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+	public void loadVector4(String uniformName, Vector4f vector) {
+		GL20.glUniform4f(getUniformLocation(uniformName), vector.x, vector.y, vector.z, vector.w);
 	}
 
-	protected void loadVector3(int location, Vector3f vector) {
-		GL20.glUniform3f(location, vector.x, vector.y, vector.z);
+	public void loadVector3(String uniformName, Vector3f vector) {
+		GL20.glUniform3f(getUniformLocation(uniformName), vector.x, vector.y, vector.z);
 	}
 
-	protected void loadVector2(int location, Vector2f vector) {
-		GL20.glUniform2f(location, vector.x, vector.y);
+	public void loadVector2(String uniformName, Vector2f vector) {
+		GL20.glUniform2f(getUniformLocation(uniformName), vector.x, vector.y);
 	}
 
 
-	protected void loadBoolean(int location, boolean value) {
+	public void loadBoolean(String uniformName, boolean value) {
 		float toLoad = value ? 1: 0;
-		GL20.glUniform1f(location, toLoad);
+		GL20.glUniform1f(getUniformLocation(uniformName), toLoad);
 	}
 
-	protected void loadMatrix(int location, Matrix4f matrix) {
+	public void loadMatrix(String uniformName, Matrix4f matrix) {
 		store(matrixBuffer, matrix);
 		matrixBuffer.flip();
-		glUniformMatrix4fv(location, false, matrixBuffer);
+		glUniformMatrix4fv(getUniformLocation(uniformName), false, matrixBuffer);
 	}
 
 	public void store(FloatBuffer matrixBuffer, Matrix4f matrix) {
@@ -116,9 +114,9 @@ public abstract class ShaderProgram {
 		GL20.glDeleteProgram(programID);
 	}
 	
-	protected abstract void bindAttributes();
+	public abstract void bindAttributes();
 	
-	protected void bindAttribute(int attribute, String variableName){
+	public void bindAttribute(int attribute, String variableName){
 		GL20.glBindAttribLocation(programID, attribute, variableName);
 	}
 
@@ -140,8 +138,8 @@ public abstract class ShaderProgram {
 		GL20.glShaderSource(shaderID, shaderSource);
 		GL20.glCompileShader(shaderID);
 		if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS )== GL11.GL_FALSE){
-			System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
-			System.err.println("Could not compile shader " + file + "!");
+			LOGGER.info(GL20.glGetShaderInfoLog(shaderID, 500));
+			LOGGER.error("Could not compile shader {}!", file);
 			System.exit(-1);
 		}
 		return shaderID;

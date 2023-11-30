@@ -6,16 +6,16 @@ import java.util.List;
 
 public class TextMeshCreator {
 
-	protected static final double LINE_HEIGHT = 0.03f;
-	protected static final int SPACE_ASCII = 32;
+	public static final double LINE_HEIGHT = 0.03f;
+	public static final int SPACE_ASCII = 32;
 
 	private MetaFile metaData;
 
-	protected TextMeshCreator(File metaFile) {
+	public TextMeshCreator(File metaFile) {
 		metaData = new MetaFile(metaFile);
 	}
 
-	protected TextMeshData createTextMesh(GUIText text) {
+	public TextMeshData createTextMesh(GUIText text) {
 		List<Line> lines = createStructure(text);
 		TextMeshData data = createQuadVertices(text, lines);
 		return data;

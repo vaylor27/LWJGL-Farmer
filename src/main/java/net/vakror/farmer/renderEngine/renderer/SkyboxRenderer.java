@@ -67,19 +67,19 @@ public class SkyboxRenderer {
     private int texture;
     private SkyboxShader shader;
 
-    public SkyboxRenderer(Loader loader, Matrix4f projectionMatrix) {
-        cube = loader.loadToVAO(VERTICES, 3);
-        texture = loader.loadCubeMap(TEXTURE_FILES);
+    public SkyboxRenderer(Matrix4f projectionMatrix) {
+        cube = Loader.loadToVAO(VERTICES, 3);
+        texture = Loader.loadCubeMap(TEXTURE_FILES);
         shader = new SkyboxShader();
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
         shader.stop();
     }
 
-    public void render(Camera camera) {
+    public void render() {
         glDisable(GL_DEPTH_TEST);
         shader.start();
-        shader.loadViewMatrix(camera);
+        shader.loadViewMatrix();
 
 // Disable depth writing and set up a reversed depth buffer for the skybox
         glDepthMask(false);

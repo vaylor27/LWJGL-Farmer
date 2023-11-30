@@ -148,7 +148,7 @@ public class GUIText {
 	/**
 	 * @return the font size of the text (a font size of 1 is normal).
 	 */
-	protected float getFontSize() {
+	public float getFontSize() {
 		return fontSize;
 	}
 
@@ -158,28 +158,28 @@ public class GUIText {
 	 * 
 	 * @param number
 	 */
-	protected void setNumberOfLines(int number) {
+	public void setNumberOfLines(int number) {
 		this.numberOfLines = number;
 	}
 
 	/**
 	 * @return {@code true} if the text should be centered.
 	 */
-	protected boolean isCentered() {
+	public boolean isCentered() {
 		return centerText;
 	}
 
 	/**
 	 * @return The maximum length of a line of this text.
 	 */
-	protected float getMaxLineSize() {
+	public float getMaxLineSize() {
 		return lineMaxSize;
 	}
 
 	/**
 	 * @return The string of text.
 	 */
-	protected String getTextString() {
+	public String getTextString() {
 		return textString;
 	}
 

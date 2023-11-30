@@ -1,15 +1,23 @@
 package net.vakror.farmer.renderEngine.water;
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 
-import net.vakror.farmer.renderEngine.listener.WindowResizeListener;
+import net.vakror.farmer.FarmerGameMain;
+import net.vakror.farmer.renderEngine.listener.*;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterComplexListener;
+import net.vakror.farmer.renderEngine.listener.register.ListenerProvider;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
+import net.vakror.farmer.renderEngine.listener.type.WindowResizeListener;
 import net.vakror.farmer.renderEngine.mouse.InputUtil;
 import org.lwjgl.opengl.*;
 
 import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11.glGetIntegerv;
 
-public class WaterFrameBuffers implements WindowResizeListener {
+@AutoRegisterComplexListener
+public class WaterFrameBuffers implements WindowResizeListener, CloseGameListener, ListenerProvider {
 
 	private int reflectionFrameBuffer;
 	private int reflectionTexture;
@@ -18,6 +26,11 @@ public class WaterFrameBuffers implements WindowResizeListener {
 	private int refractionFrameBuffer;
 	private int refractionTexture;
 	private int refractionDepthTexture;
+
+	public WaterFrameBuffers() { //call when loading the game; argument is only here to make java happy
+		initialiseReflectionFrameBuffer();
+		initialiseRefractionFrameBuffer();
+	}
 
 	public WaterFrameBuffers(float height) { //call when loading the game; argument is only here to make java happy
 		initialiseReflectionFrameBuffer();
@@ -30,7 +43,7 @@ public class WaterFrameBuffers implements WindowResizeListener {
 		initialiseRefractionFrameBuffer();
 	}
 
-	public void cleanUp() { //call when closing the game
+	public void onGameClose() { //call when closing the game
 		GL30.glDeleteFramebuffers(reflectionFrameBuffer);
 		GL11.glDeleteTextures(reflectionTexture);
 		GL30.glDeleteRenderbuffers(reflectionDepthBuffer);
@@ -130,5 +143,15 @@ public class WaterFrameBuffers implements WindowResizeListener {
 		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT,
 				GL30.GL_RENDERBUFFER, depthBuffer);
 		return depthBuffer;
+	}
+
+	@Override
+	public Listener getListener() {
+		return null;
+	}
+
+	@Override
+	public Set<Listener> getListeners() {
+		return new HashSet<>(FarmerGameMain.fbos.values());
 	}
 }

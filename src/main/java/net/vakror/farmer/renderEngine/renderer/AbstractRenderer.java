@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 
@@ -33,7 +34,8 @@ public abstract class AbstractRenderer {
     }
 
     void unbindTexturedModel() {
-        MasterRenderer.enableCulling();
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);

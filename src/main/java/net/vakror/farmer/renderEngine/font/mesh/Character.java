@@ -47,7 +47,7 @@ public class Character {
 	 *            - how far in pixels the cursor should advance after adding
 	 *            this character.
 	 */
-	protected Character(int id, double xTextureCoord, double yTextureCoord, double xTexSize, double yTexSize,
+	public Character(int id, double xTextureCoord, double yTextureCoord, double xTexSize, double yTexSize,
 			double xOffset, double yOffset, double sizeX, double sizeY, double xAdvance) {
 		this.id = id;
 		this.xTextureCoord = xTextureCoord;
@@ -61,43 +61,43 @@ public class Character {
 		this.xAdvance = xAdvance;
 	}
 
-	protected int getId() {
+	public int getId() {
 		return id;
 	}
 
-	protected double getxTextureCoord() {
+	public double getxTextureCoord() {
 		return xTextureCoord;
 	}
 
-	protected double getyTextureCoord() {
+	public double getyTextureCoord() {
 		return yTextureCoord;
 	}
 
-	protected double getXMaxTextureCoord() {
+	public double getXMaxTextureCoord() {
 		return xMaxTextureCoord;
 	}
 
-	protected double getYMaxTextureCoord() {
+	public double getYMaxTextureCoord() {
 		return yMaxTextureCoord;
 	}
 
-	protected double getxOffset() {
+	public double getxOffset() {
 		return xOffset;
 	}
 
-	protected double getyOffset() {
+	public double getyOffset() {
 		return yOffset;
 	}
 
-	protected double getSizeX() {
+	public double getSizeX() {
 		return sizeX;
 	}
 
-	protected double getSizeY() {
+	public double getSizeY() {
 		return sizeY;
 	}
 
-	protected double getxAdvance() {
+	public double getxAdvance() {
 		return xAdvance;
 	}
 

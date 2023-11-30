@@ -1,7 +1,10 @@
 package net.vakror.farmer.renderEngine.mouse;
 
+import net.vakror.farmer.GameEntryPoint;
+import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.listener.*;
+import net.vakror.farmer.renderEngine.listener.type.*;
 import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
@@ -13,7 +16,8 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 
-public class InputUtil {
+public class InputUtil implements GameEntryPoint {
+
 
     static {
         GLFW.glfwSetScrollCallback(Window.window, GLFWScrollCallback.create(InputUtil::glfwScrollCallback));
@@ -126,6 +130,22 @@ public class InputUtil {
         isCursorDisabled = false;
     }
 
+    @Override
+    public void initialize() {
+        if (Options.startWithMouseCaptured()) {
+            glfwSetInputMode(Window.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            InputUtil.isCursorDisabled = true;
+        } else {
+            glfwSetInputMode(Window.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            Listeners.getListeners(MouseCapturedListener.class).forEach(MouseCapturedListener::onReleased);
+            InputUtil.isCursorDisabled = false;
+        }
+
+        GLFW.glfwSetCursorPos(Window.window, initialMouseCoords.x, initialMouseCoords.y);
+        currentMousePos.setScreenCoordinates(initialMouseCoords.x, initialMouseCoords.y);
+        previousCapturedPos.setScreenCoordinates(initialMouseCoords.x, initialMouseCoords.y);
+    }
+
     public enum MouseButton {
         LEFT(GLFW.GLFW_MOUSE_BUTTON_LEFT),
         RIGHT(GLFW.GLFW_MOUSE_BUTTON_MIDDLE),
@@ -150,10 +170,6 @@ public class InputUtil {
 
         public static KeyAction fromInt(int action) {
             return action == GLFW_PRESS ? PRESS: action == GLFW_REPEAT ? REPEAT: action == GLFW_RELEASE? NOT_PRESSED: NULL;
-        }
-
-        public int getAction() {
-            return action;
         }
     }
 }

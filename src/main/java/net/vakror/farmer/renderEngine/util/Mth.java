@@ -46,13 +46,13 @@ public class Mth {
         return matrix;
     }
 
-    public static Matrix4f createViewMatrix(Camera camera) {
+    public static Matrix4f createViewMatrix() {
         Matrix4f viewMatrix = new Matrix4f();
         viewMatrix.identity();
-        viewMatrix.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0));
-        viewMatrix.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0));
-        viewMatrix.translate(camera.getPosition().negate());
-        camera.getPosition().negate();
+        viewMatrix.rotate((float) Math.toRadians(Camera.getPitch()), new Vector3f(1, 0, 0));
+        viewMatrix.rotate((float) Math.toRadians(Camera.getYaw()), new Vector3f(0, 1, 0));
+        viewMatrix.translate(Camera.getPosition().negate());
+        Camera.getPosition().negate();
         return viewMatrix;
     }
 

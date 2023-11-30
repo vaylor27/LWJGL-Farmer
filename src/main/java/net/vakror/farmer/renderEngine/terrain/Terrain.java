@@ -1,5 +1,6 @@
 package net.vakror.farmer.renderEngine.terrain;
 
+import net.vakror.farmer.FarmerGameMain;
 import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
@@ -7,6 +8,7 @@ import net.vakror.farmer.renderEngine.util.Mth;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import org.joml.Math;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.imageio.ImageIO;
@@ -27,11 +29,11 @@ public class Terrain {
 
     private float[][] heights;
 
-    public Terrain(int gridX, int gridZ, Loader loader, ModelTexture texture, ResourcePath heightMap) {
+    public Terrain(int gridX, int gridZ, ModelTexture texture, ResourcePath heightMap) {
         this.texture = texture;
         this.x = gridX * SIZE;
         this.z = gridZ * SIZE;
-        this.model = generateTerrain(loader, heightMap);
+        this.model = generateTerrain(heightMap);
     }
 
     public float getX() {
@@ -48,6 +50,23 @@ public class Terrain {
 
     public ModelTexture getTexture() {
         return texture;
+    }
+
+    public static Vector2i getGridCoord(float worldX, float worldZ) {
+        for (Terrain[] terrains : FarmerGameMain.terrains) {
+            for (Terrain terrain : terrains) {
+                if (terrain != null) {
+                    Vector2f worldPosMin = new Vector2f(terrain.x, terrain.z);
+                    Vector2f worldPosMax = new Vector2f(terrain.x + SIZE, terrain.z + SIZE);
+                    float x = worldX / SIZE;
+                    float z = worldZ / SIZE;
+                    if (x > worldPosMin.x && x < worldPosMax.x && z > worldPosMin.y && z < worldPosMax.y) {
+                        return new Vector2i((int) terrain.x, (int) terrain.z);
+                    }
+                }
+            }
+        }
+        return new Vector2i(0, 0);
     }
 
     public float getHeightOfTerrain(float worldX, float worldZ) {
@@ -75,7 +94,7 @@ public class Terrain {
         return height;
     }
 
-    private RawModel generateTerrain(Loader loader, ResourcePath heightMap) {
+    private RawModel generateTerrain(ResourcePath heightMap) {
 
         BufferedImage image;
         try {
@@ -124,7 +143,7 @@ public class Terrain {
                 indices[pointer++] = bottomRight;
             }
         }
-        return loader.loadToVAO(vertices, textureCoords, normals, indices);
+        return Loader.loadToVAO(vertices, textureCoords, normals, indices);
     }
 
     private Vector3f calculateNormal(int x, int z, BufferedImage image) {

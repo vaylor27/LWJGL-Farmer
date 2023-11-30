@@ -13,17 +13,20 @@ import net.vakror.farmer.renderEngine.model.RawModel;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static net.vakror.farmer.FarmerGameMain.LOGGER;
+
 public class OBJLoader {
 
-    public static RawModel loadOBJ(ResourcePath objFilePath, Loader loader) {
+    public static RawModel loadOBJ(ResourcePath objFilePath) {
         FileReader isr = null;
         File objFile = new File(objFilePath.getModelPath());
-        System.out.println("OBJFileLoader: loading file: " + objFilePath.getModelPath());
+        LOGGER.info("OBJFileLoader: loading file {}", objFilePath.getModelPath());
         try {
             isr = new FileReader(objFile);
         } catch (FileNotFoundException e) {
-            System.err.println("OBJFileLoader: File not found: " + objFilePath.getModelPath());
+            LOGGER.error("OBJFileLoader: File not found: " + objFilePath.getModelPath());
         }
+        assert isr != null;
         BufferedReader reader = new BufferedReader(isr);
         String line;
         List<Vertex> vertices = new ArrayList<>();
@@ -39,24 +42,24 @@ public class OBJLoader {
                 line = reader.readLine();
                 if (line.startsWith("v ")) {
                     String[] currentLine = line.split(" ");
-                    Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]),
-                            (float) Float.valueOf(currentLine[3]));
+                    Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]),
+                            Float.parseFloat(currentLine[2]),
+                            Float.parseFloat(currentLine[3]));
                     Vertex newVertex = new Vertex(vertices.size(), vertex);
                     vertices.add(newVertex);
                     vCount++;
 
                 } else if (line.startsWith("vt ")) {
                     String[] currentLine = line.split(" ");
-                    Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]));
+                    Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]),
+                            Float.parseFloat(currentLine[2]));
                     textures.add(texture);
                     vtCount++;
                 } else if (line.startsWith("vn ")) {
                     String[] currentLine = line.split(" ");
-                    Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]),
-                            (float) Float.valueOf(currentLine[2]),
-                            (float) Float.valueOf(currentLine[3]));
+                    Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]),
+                            Float.parseFloat(currentLine[2]),
+                            Float.parseFloat(currentLine[3]));
                     normals.add(normal);
                     vnCount++;
                 } else if (line.startsWith("f ")) {
@@ -77,10 +80,10 @@ public class OBJLoader {
             }
             reader.close();
         } catch (IOException e) {
-            System.err.println("OBJFileLoader: Error reading the file: " + objFilePath.getModelPath());
+            LOGGER.error("OBJFileLoader: Error reading the file: " + objFilePath.getModelPath());
         }
 
-        System.out.println("OBJFileLoader:"
+        LOGGER.info("OBJFileLoader:"
                 + " vertices: " + vCount
                 + " textureCoords: " + vtCount
                 + " normals: " + vnCount
@@ -91,14 +94,10 @@ public class OBJLoader {
         float[] texturesArray = new float[vertices.size() * 2];
         float[] normalsArray = new float[vertices.size() * 3];
         float[] tangentsArray = new float[vertices.size() * 3];
-        //float furthest =
         convertDataToArrays(vertices, textures, normals, verticesArray,
                 texturesArray, normalsArray, tangentsArray);
         int[] indicesArray = convertIndicesListToArray(indices);
-        // ModelData data = new ModelData(verticesArray, texturesArray,
-        // normalsArray, tangentsArray, indicesArray,
-        // furthest);
-        return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
+        return Loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
     }
 
     // Changed scale() to mul()
@@ -138,10 +137,6 @@ public class OBJLoader {
 
     private static Vertex processVertex(String[] vertex, List<Vertex> vertices,
                                         List<Integer> indices) {
-
-        //System.out.println("vertex[0] = " + vertex[0]);
-        //System.out.println("vertex[1] = " + vertex[1]);
-        //System.out.println("vertex[2] = " + vertex[2]);
 
         int index = Integer.parseInt(vertex[0]) - 1;
         Vertex currentVertex = vertices.get(index);

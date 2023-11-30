@@ -1,8 +1,9 @@
 package net.vakror.farmer;
 
-import net.vakror.farmer.register.option.FloatOption;
 import net.vakror.farmer.register.option.Option;
 import net.vakror.farmer.register.option.Vector3fOption;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterListener;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
 import net.vakror.farmer.renderEngine.registry.core.RegistryLocation;
 import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import org.joml.Vector3f;
@@ -11,8 +12,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
 
+import static net.vakror.farmer.FarmerGameMain.LOGGER;
+
 //TODO: add option groups and a gui
-public class Options {
+@AutoRegisterListener
+public class Options implements CloseGameListener {
 
     public static float ambientLight() {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("ambientLight")).getAsFloatOption().value();
@@ -50,7 +54,7 @@ public class Options {
         return DefaultRegistries.OPTIONS.get(new RegistryLocation("startWithMouseCaptured")).getAsBooleanOption().value();
     }
 
-    public static void save() {
+    public void onGameClose() {
         File file = new File(FarmerGameMain.appDirPath + "/options.txt");
         try(StringWriter writer = new StringWriter()) {
             file.delete();
@@ -97,7 +101,7 @@ public class Options {
             Option<T> option = (Option<T>) DefaultRegistries.OPTIONS.get(location);
             option.setValue(option.valueFromString(value));
         } else {
-            System.out.printf("Option \"%s\" was not found, skipping%n", key);
+            LOGGER.warn("Option {} was not found in registry, skipping", key);
         }
     }
 }

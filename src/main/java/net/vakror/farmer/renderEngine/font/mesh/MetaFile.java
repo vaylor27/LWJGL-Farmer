@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.vakror.farmer.FarmerGameMain.LOGGER;
+
 /**
  * Provides functionality for getting the values from a font file.
  * 
@@ -48,7 +50,7 @@ public class MetaFile {
 	 * @param file
 	 *            - the font file.
 	 */
-	protected MetaFile(File file) {
+	public MetaFile(File file) {
 		this.aspectRatio = (double) InputUtil.getWindowWidth() / (double) InputUtil.getWindowHeight();
 		openFile(file);
 		loadPaddingData();
@@ -58,11 +60,11 @@ public class MetaFile {
 		close();
 	}
 
-	protected double getSpaceWidth() {
+	public double getSpaceWidth() {
 		return spaceWidth;
 	}
 
-	protected Character getCharacter(int ascii) {
+	public Character getCharacter(int ascii) {
 		return metaData.get(ascii);
 	}
 
@@ -140,7 +142,7 @@ public class MetaFile {
 			reader = new BufferedReader(new FileReader(file));
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Couldn't read font meta file!");
+			LOGGER.error("Couldn't read font meta file {}!", file);
 		}
 	}
 

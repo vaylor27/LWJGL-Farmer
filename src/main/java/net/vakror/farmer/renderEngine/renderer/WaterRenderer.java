@@ -20,33 +20,32 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import static net.vakror.farmer.FarmerGameMain.fbos;
 import static net.vakror.farmer.FarmerGameMain.lights;
 
 public class WaterRenderer {
 
 	private RawModel quad;
 	private final WaterShader shader;
-	private final Map<Float, WaterFrameBuffers> fbos;
 	private final int dudvTexture;
 	private final int waterNormalMapTexture;
 
 	private static final float MOVE_SPEED = 0.03f;
 	private float moveFactor = 0;
 
-	public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, Map<Float, WaterFrameBuffers> fbos) {
+	public WaterRenderer(WaterShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
-		this.fbos = fbos;
-		dudvTexture = loader.loadTexture(new ResourcePath("dudv"));
-		waterNormalMapTexture = loader.loadTexture(new ResourcePath("waterNormalMap"));
+		dudvTexture = Loader.loadTexture(new ResourcePath("dudv"));
+		waterNormalMapTexture = Loader.loadTexture(new ResourcePath("waterNormalMap"));
 		shader.start();
 		shader.connectTextureUnits();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
-		setUpVAO(loader);
+		setUpVAO();
 	}
 
-	public void render(WaterTile tile, Camera camera) {
-		prepareRender(camera, tile);
+	public void render(WaterTile tile) {
+		prepareRender(tile);
 		Matrix4f modelMatrix = Mth.createTransformationMatrix(
 				new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
 				WaterTile.TILE_SIZE);
@@ -55,9 +54,9 @@ public class WaterRenderer {
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera, WaterTile waterTile) {
+	private void prepareRender(WaterTile waterTile) {
 		shader.start();
-		shader.loadViewMatrix(camera);
+		shader.loadViewMatrix();
 		moveFactor += MOVE_SPEED * Window.getFrameTimeSeconds();
 		moveFactor %= 1;
 		shader.loadMoveFactor(moveFactor);
@@ -87,10 +86,10 @@ public class WaterRenderer {
 		shader.stop();
 	}
 
-	private void setUpVAO(Loader loader) {
+	private void setUpVAO() {
 		// Just x and z vectex positions here, y is set to 0 in v.shader
 		float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
-		quad = loader.loadToVAO(vertices, 2);
+		quad = Loader.loadToVAO(vertices, 2);
 	}
 
 }

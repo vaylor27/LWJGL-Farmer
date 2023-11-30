@@ -1,10 +1,13 @@
 package net.vakror.farmer.renderEngine.renderer;
 
+import net.vakror.farmer.FarmerGameMain;
 import net.vakror.farmer.Options;
-import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterListener;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
+import net.vakror.farmer.renderEngine.listener.type.RenderListener;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
 import net.vakror.farmer.renderEngine.shader.SpecularStaticShader;
 import net.vakror.farmer.renderEngine.shader.SpecularTerrainShader;
@@ -24,77 +27,66 @@ import java.util.List;
 import java.util.Map;
 
 import static net.vakror.farmer.FarmerGameMain.*;
-import static net.vakror.farmer.FarmerGameMain.loader;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_CLIP_DISTANCE0;
 
-public class MasterRenderer {
+@AutoRegisterListener
+public class MasterRenderer implements CloseGameListener, RenderListener {
 
-    private final SpecularStaticShader entityShader = new SpecularStaticShader();
-    private EntityRenderer entityRenderer;
+    public static final Matrix4f projectionMatrix = Mth.createProjectionMatrix();
+    private static final SpecularStaticShader entityShader = new SpecularStaticShader();
+    private static EntityRenderer entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
 
-    private final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
-    private final List<Terrain> terrains = new ArrayList<>();
+    private static final Map<TexturedModel, List<Entity>> entities = new HashMap<>();
+    private static final List<Terrain> terrains = new ArrayList<>();
+    private static final SpecularTerrainShader terrainShader = new SpecularTerrainShader();
+    private static TerrainRenderer terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+    private static final SkyboxRenderer skyboxRenderer = new SkyboxRenderer(projectionMatrix);
+    private static final WaterShader waterShader = new WaterShader();
+    private static final WaterRenderer waterRenderer = new WaterRenderer(waterShader, projectionMatrix);
 
-    private TerrainRenderer terrainRenderer;
-    private final SpecularTerrainShader terrainShader = new SpecularTerrainShader();
+    public static GuiRenderer guiRenderer = new GuiRenderer();
 
-    private final SkyboxRenderer skyboxRenderer;
-    private static final Matrix4f projectionMatrix = Mth.createProjectionMatrix();;
-
-    private final WaterShader waterShader = new WaterShader();
-    private final WaterRenderer waterRenderer;
-
-    public static GuiRenderer guiRenderer = new GuiRenderer(loader);
-
-    public MasterRenderer(Loader loader, Map<Float, WaterFrameBuffers> fbos) {
-        enableCulling();
-        waterRenderer = new WaterRenderer(loader, waterShader, projectionMatrix, fbos);
-        entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
-        terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-        skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
-    }
-
-    public Matrix4f getProjectionMatrix() {
+    public static Matrix4f getProjectionMatrix() {
         return projectionMatrix;
     }
 
-    public void regenProjectionMatrix() {
+    public static void regenProjectionMatrix() {
         Matrix4f projectionMatrix = Mth.createProjectionMatrix();
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-    }
-
-    public static void enableCulling() {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
     }
 
     public static void disableCulling() {
         glDisable(GL_CULL_FACE);
     }
 
-    public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights, Camera camera, Vector4f clipPlane, boolean shouldRenderWaterAndGuis) {
-        for (Terrain terrain : terrains) {
-            processTerrain(terrain);
+    public static void renderScene(List<Entity> entities, Terrain[][] terrains, List<Light> lights, Vector4f clipPlane, boolean shouldRenderWaterAndGuis) {
+        for (Terrain[] terrains1 : terrains) {
+            for (Terrain terrain : terrains1) {
+                if (terrain != null) {
+                    processTerrain(terrain);
+                }
+            }
         }
         for (Entity entity : entities) {
             processEntity(entity);
         }
-        render(lights, camera, clipPlane, shouldRenderWaterAndGuis);
+        render(lights, clipPlane, shouldRenderWaterAndGuis);
     }
 
-    public void render(List<Light> lights, Camera camera, Vector4f clipPlane, boolean shouldRenderWaterAndGuis) {
+    public static void render(List<Light> lights, Vector4f clipPlane, boolean shouldRenderWaterAndGuis) {
         prepare();
 
-        renderSkybox(camera);
+        renderSkybox();
 
         glEnable(GL_DEPTH_TEST);
-        renderEntities(lights, camera, clipPlane);
-        renderTerrain(lights, camera, clipPlane);
+        renderEntities(lights, clipPlane);
+        renderTerrain(lights, clipPlane);
 
         if (shouldRenderWaterAndGuis) {
             for (WaterTile tile: waterTiles) {
-                waterRenderer.render(tile, camera);
+                waterRenderer.render(tile);
             }
 
             glDisable(GL_DEPTH_TEST);
@@ -105,40 +97,42 @@ public class MasterRenderer {
         }
     }
 
-    private void renderSkybox(Camera camera) {
-        skyboxRenderer.render(camera);
+    private static void renderSkybox() {
+        skyboxRenderer.render();
     }
 
-    private void renderEntities(List<Light> lights, Camera camera, Vector4f clipPlane) {
+    private static void renderEntities(List<Light> lights, Vector4f clipPlane) {
         entityShader.start();
         entityShader.loadClipPlane(clipPlane);
         entityShader.loadSkyColor(Options.skyColor());
         entityShader.loadLights(lights, Options.ambientLight());
-        entityShader.loadViewMatrix(camera);
+        entityShader.loadViewMatrix();
         entityRenderer.render(entities);
         entityShader.stop();
         entities.clear();
     }
 
-    private void renderTerrain(List<Light> light, Camera camera, Vector4f clipPlane) {
+    private static void renderTerrain(List<Light> light, Vector4f clipPlane) {
         terrainShader.start();
         terrainShader.loadClipPlane(clipPlane);
         terrainShader.loadSkyColor(Options.skyColor());
         terrainShader.loadLights(light, Options.ambientLight());
-        terrainShader.loadViewMatrix(camera);
+        terrainShader.loadViewMatrix();
         terrainRenderer.render(terrains);
         terrainShader.stop();
         terrains.clear();
     }
 
-    public void prepare() {
+    public static void prepare() {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         GL11.glEnable(GL_DEPTH_TEST);
         GL11.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Vector3f skyColor = Options.skyColor();
         GL11.glClearColor(skyColor.x, skyColor.y, skyColor.z, 1);
     }
 
-    public void processEntity(Entity entity) {
+    public static void processEntity(Entity entity) {
         TexturedModel entityModel = entity.getModel();
         List<Entity> batch = entities.get(entityModel);
         if (batch != null) {
@@ -150,14 +144,45 @@ public class MasterRenderer {
         }
     }
 
-    public void processTerrain(Terrain terrain) {
+    public static void processTerrain(Terrain terrain) {
         terrains.add(terrain);
     }
 
-    public void cleanUp() {
+    public void onGameClose() {
         entityShader.cleanUp();
         terrainShader.cleanUp();
         waterShader.cleanUp();
         guiRenderer.cleanUp();
+    }
+
+    @Override
+    public void onRender() {
+        GL11.glEnable(GL_CLIP_DISTANCE0);
+        fbos.forEach((height, fbo) -> {
+            renderReflection(height, fbo);
+            renderRefraction(height, fbo);
+        });
+        renderNormal();
+    }
+
+    private static void renderReflection(Float height, WaterFrameBuffers fbo) {
+        fbo.bindReflectionFrameBuffer();
+        float distance = 2 * (Camera.getPosition().y - height);
+        Camera.getPosition().y -= distance;
+        Camera.invertPitch();
+        renderScene(FarmerGameMain.entities, FarmerGameMain.terrains, lights, new Vector4f(0, 1, 0, -height + 1f), false);
+        Camera.getPosition().y += distance;
+        Camera.invertPitch();
+    }
+
+    private static void renderRefraction(Float height, WaterFrameBuffers fbo) {
+        fbo.bindRefractionFrameBuffer();
+        renderScene(FarmerGameMain.entities, FarmerGameMain.terrains, lights, new Vector4f(0, -1, 0, height + 1f), false);
+    }
+
+    private static void renderNormal() {
+        GL11.glDisable(GL_CLIP_DISTANCE0);
+        WaterFrameBuffers.unbindCurrentFrameBuffer();
+        renderScene(FarmerGameMain.entities, FarmerGameMain.terrains, lights, new Vector4f(0, -1, 0, 100000), true);
     }
 }

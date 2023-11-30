@@ -1,7 +1,6 @@
 package net.vakror.farmer.renderEngine;
 
 
-import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 

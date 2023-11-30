@@ -8,33 +8,24 @@ import org.joml.Matrix4f;
 
 public class SkyboxShader extends ShaderProgram {
 
-    private int projectionMatrixLocation;
-    private int viewMatrixLocation;
-
     public SkyboxShader() {
         super(new ResourcePath("skybox/vertexShader"), new ResourcePath("skybox/fragmentShader"));
     }
 
     public void loadProjectionMatrix(Matrix4f matrix) {
-        super.loadMatrix(projectionMatrixLocation, matrix);
+        super.loadMatrix("projectionMatrix", matrix);
     }
 
-    public void loadViewMatrix(Camera camera) {
-        Matrix4f matrix = Mth.createViewMatrix(camera);
+    public void loadViewMatrix() {
+        Matrix4f matrix = Mth.createViewMatrix();
         matrix.m30(0);
         matrix.m31(0);
         matrix.m32(0);
-        super.loadMatrix(viewMatrixLocation, matrix);
+        super.loadMatrix("viewMatrix", matrix);
     }
 
     @Override
-    protected void getAllUniformLocations() {
-        projectionMatrixLocation = super.getUniformLocation("projectionMatrix");
-        viewMatrixLocation = super.getUniformLocation("viewMatrix");
-    }
-
-    @Override
-    protected void bindAttributes() {
+    public void bindAttributes() {
         super.bindAttribute(0, "position");
     }
 }

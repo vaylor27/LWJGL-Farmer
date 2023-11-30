@@ -27,7 +27,7 @@ public class Line {
 	 * @param maxLength
 	 *            - the screen-space maximum length of a line.
 	 */
-	protected Line(double spaceWidth, double fontSize, double maxLength) {
+	public Line(double spaceWidth, double fontSize, double maxLength) {
 		this.spaceSize = spaceWidth * fontSize;
 		this.maxLength = maxLength;
 	}
@@ -41,7 +41,7 @@ public class Line {
 	 *            - the word to try to add.
 	 * @return {@code true} if the word has successfully been added to the line.
 	 */
-	protected boolean attemptToAddWord(Word word) {
+	public boolean attemptToAddWord(Word word) {
 		double additionalLength = word.getWordWidth();
 		additionalLength += !words.isEmpty() ? spaceSize : 0;
 		if (currentLineLength + additionalLength <= maxLength) {
@@ -56,21 +56,21 @@ public class Line {
 	/**
 	 * @return The max length of the line.
 	 */
-	protected double getMaxLength() {
+	public double getMaxLength() {
 		return maxLength;
 	}
 
 	/**
 	 * @return The current screen-space length of the line.
 	 */
-	protected double getLineLength() {
+	public double getLineLength() {
 		return currentLineLength;
 	}
 
 	/**
 	 * @return The list of words in the line.
 	 */
-	protected List<Word> getWords() {
+	public List<Word> getWords() {
 		return words;
 	}
 

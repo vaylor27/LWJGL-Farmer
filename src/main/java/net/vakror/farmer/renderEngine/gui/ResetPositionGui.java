@@ -1,8 +1,7 @@
 package net.vakror.farmer.renderEngine.gui;
 
-import net.vakror.farmer.FarmerGameMain;
+import net.vakror.farmer.renderEngine.camera.Camera;
 import net.vakror.farmer.renderEngine.camera.CameraData;
-import net.vakror.farmer.renderEngine.listeners.CorrectCameraOnCapture;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import org.joml.Vector2f;
 
@@ -15,11 +14,11 @@ public class ResetPositionGui extends GuiTexture {
     }
 
     @Override
-    public void onClick(int button, int action) {
-        FarmerGameMain.camera.nextCameraFocusPoint = new Vector2f(Terrain.SIZE / 2, Terrain.SIZE / 2);
-        FarmerGameMain.camera.distanceToNextFocus = 0;
-        FarmerGameMain.camera.alpha = 1;
-        CorrectCameraOnCapture.lastCameraData = new CameraData(FarmerGameMain.camera);
+    public void onGuiClicked(int button, int action) {
+        Camera.nextCameraFocusPoint = new Vector2f(Terrain.SIZE / 2, Terrain.SIZE / 2);
+        Camera.distanceToNextFocus = 0;
+        Camera.alpha = 1;
+        Camera.lastCameraData = new CameraData();
     }
 
     @Override

@@ -1,45 +1,35 @@
 package net.vakror.farmer.renderEngine.mouse;
 
 
-import net.vakror.farmer.renderEngine.Window;
 import net.vakror.farmer.renderEngine.camera.Camera;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterListener;
+import net.vakror.farmer.renderEngine.listener.type.RenderListener;
+import net.vakror.farmer.renderEngine.renderer.MasterRenderer;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.util.Mth;
 import org.joml.*;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
 
-public class MousePicker {
+import static net.vakror.farmer.FarmerGameMain.terrains;
+
+@AutoRegisterListener
+public class MousePicker implements RenderListener {
 
     private static final int RECURSION_COUNT = 1000;
     private static final float RAY_RANGE = 3000;
 
-    private Vector3f currentRay = new Vector3f();
+    private static Vector3f currentRay = new Vector3f();
 
-    private Matrix4f projectionMatrix;
-    private Matrix4f viewMatrix;
-    private Camera camera;
+    private static Matrix4f projectionMatrix = MasterRenderer.projectionMatrix;
+    private static Matrix4f viewMatrix = Mth.createViewMatrix();
+    public static Terrain terrain;
+    private static Vector3f currentTerrainPoint;
 
-    private Terrain terrain;
-    private Vector3f currentTerrainPoint;
-
-    public MousePicker(Camera cam, Matrix4f projection, Terrain terrain) {
-        camera = cam;
-        projectionMatrix = projection;
-        viewMatrix = Mth.createViewMatrix(camera);
-        this.terrain = terrain;
-    }
-
-    public Vector3f getCurrentTerrainPoint() {
+    public static Vector3f getCurrentTerrainPoint() {
         return currentTerrainPoint;
     }
 
-    public Vector3f getCurrentRay() {
-        return currentRay;
-    }
-
-    public void update() {
-        viewMatrix = Mth.createViewMatrix(camera);
+    public void onRender() {
+        viewMatrix = Mth.createViewMatrix();
         currentRay = calculateMouseRay();
         if (intersectionInRange(0, RAY_RANGE, currentRay)) {
             currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
@@ -48,7 +38,7 @@ public class MousePicker {
         }
     }
 
-    private Vector3f calculateMouseRay() {
+    private static Vector3f calculateMouseRay() {
         Vector3f normalizedCoords = getNormalisedDeviceCoordinates();
         Vector4f clipCoords = new Vector4f(normalizedCoords.x, normalizedCoords.y, -1.0f, 1.0f);
         Matrix4f m = new Matrix4f();
@@ -61,7 +51,7 @@ public class MousePicker {
         return ray_wor;
     }
 
-    private Vector3f toWorldCoords(Vector4f eyeCoords) {
+    private static Vector3f toWorldCoords(Vector4f eyeCoords) {
         Matrix4f invertedView = new Matrix4f();
         viewMatrix.invert(invertedView);
         Vector4f rayWorld = invertedView.transform(eyeCoords);
@@ -70,14 +60,14 @@ public class MousePicker {
         return mouseRay;
     }
 
-    private Vector4f toEyeCoords(Vector4f clipCoords) {
+    private static Vector4f toEyeCoords(Vector4f clipCoords) {
         Matrix4f invertedProjection = new Matrix4f();
         projectionMatrix.invert(invertedProjection);
         Vector4f eyeCoords = invertedProjection.transform(clipCoords);
         return new Vector4f(eyeCoords.x, eyeCoords.y, -1f, 0f);
     }
 
-    private Vector3f getNormalisedDeviceCoordinates() {
+    private static Vector3f getNormalisedDeviceCoordinates() {
         float x = (2.0f * InputUtil.currentMousePos.getAsScreenCoords().x) / InputUtil.getWindowWidth() - 1.0f;
         float y = 1.0f - (2.0f * InputUtil.currentMousePos.getAsScreenCoords().y) / InputUtil.getWindowHeight();
         float z = 1.0f;
@@ -86,14 +76,14 @@ public class MousePicker {
 
     //**********************************************************
 
-    private Vector3f getPointOnRay(Vector3f ray, float distance) {
-        Vector3f camPos = camera.getPosition();
+    private static Vector3f getPointOnRay(Vector3f ray, float distance) {
+        Vector3f camPos = Camera.getPosition();
         Vector3f start = new Vector3f(camPos.x, camPos.y, camPos.z);
         Vector3f scaledRay = new Vector3f(ray.x * distance, ray.y * distance, ray.z * distance);
         return start.add(scaledRay);
     }
 
-    private Vector3f binarySearch(int count, float start, float finish, Vector3f ray) {
+    private static Vector3f binarySearch(int count, float start, float finish, Vector3f ray) {
         float half = start + ((finish - start) / 2f);
         if (count >= RECURSION_COUNT) {
             Vector3f endPoint = getPointOnRay(ray, half);
@@ -111,13 +101,13 @@ public class MousePicker {
         }
     }
 
-    private boolean intersectionInRange(float start, float finish, Vector3f ray) {
+    private static boolean intersectionInRange(float start, float finish, Vector3f ray) {
         Vector3f startPoint = getPointOnRay(ray, start);
         Vector3f endPoint = getPointOnRay(ray, finish);
         return !isUnderGround(startPoint) && isUnderGround(endPoint);
     }
 
-    private boolean isUnderGround(Vector3f testPoint) {
+    private static boolean isUnderGround(Vector3f testPoint) {
         Terrain terrain = getTerrain(testPoint.x, testPoint.z);
         float height = 0;
         if (terrain != null) {
@@ -126,8 +116,9 @@ public class MousePicker {
         return testPoint.y < height;
     }
 
-    private Terrain getTerrain(float worldX, float worldZ) {
-        return terrain;
+    private static Terrain getTerrain(float worldX, float worldZ) {
+        Vector2i coord = Terrain.getGridCoord(worldX, worldZ);
+        return terrains[coord.x][coord.y];
     }
 
 }

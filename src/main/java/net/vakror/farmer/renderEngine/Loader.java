@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.vakror.farmer.Options;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterListener;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.texture.TextureData;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
@@ -15,17 +17,19 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryStack;
 
+import static net.vakror.farmer.FarmerGameMain.LOGGER;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load;
 
-public class Loader {
+@AutoRegisterListener
+public class Loader implements CloseGameListener {
 	
-	private final List<Integer> vaos = new ArrayList<Integer>();
-	private final List<Integer> vbos = new ArrayList<Integer>();;
-	private final List<Integer> textures = new ArrayList<Integer>();
+	private static final List<Integer> vaos = new ArrayList<Integer>();
+	private static final List<Integer> vbos = new ArrayList<Integer>();;
+	private static final List<Integer> textures = new ArrayList<Integer>();
 	
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals,int[] indices){
+	public static RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals,int[] indices){
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
@@ -35,7 +39,7 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
-	public int loadToVAO(float[] positions, float[] textureCoords){
+	public static int loadToVAO(float[] positions, float[] textureCoords){
 		int vaoID = createVAO();
 		storeDataInAttributeList(0, 2, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
@@ -44,14 +48,14 @@ public class Loader {
 	}
 
 
-	public RawModel loadToVAO(float[] positions, int dimensions) {
+	public static RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
 		storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
 		return new RawModel(vaoID, positions.length / dimensions);
 	}
 
-	public int loadCubeMap(String... textureFiles) {
+	public static int loadCubeMap(String... textureFiles) {
 		int texId = GL11.glGenTextures();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texId);
@@ -68,7 +72,7 @@ public class Loader {
 		return texId;
 	}
 
-	private TextureData decodeTextureFile(ResourcePath fileName) {
+	private static TextureData decodeTextureFile(ResourcePath fileName) {
 		int width = 0;
 		int height = 0;
 		ByteBuffer buffer = null;
@@ -83,17 +87,17 @@ public class Loader {
 			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Tried to load texture " + fileName + ", didn't work");
+			LOGGER.error("Tried to load texture {}, but failed", fileName);
 			System.exit(-1);
 		}
 		return new TextureData(buffer, width, height);
 	}
 
-	public int loadTexture(ResourcePath filePath) {
+	public static int loadTexture(ResourcePath filePath) {
 		return loadTexture(filePath, true);
 	}
 
-	public int loadTexture(ResourcePath filePath, boolean respectMipmapOption) {
+	public static int loadTexture(ResourcePath filePath, boolean respectMipmapOption) {
 		int textureId;
 		int width, height;
 		ByteBuffer image;
@@ -107,7 +111,7 @@ public class Loader {
 
 			image = stbi_load(fullPath, w, h, comp, 4);
 			if (image == null) {
-				System.err.println("Could not load texture file: " + fullPath + "! Reason: " + stbi_failure_reason());
+				LOGGER.error("Could not load texture file {} ! Reason: {}", fullPath, stbi_failure_reason());
 			}
 			width = w.get();
 			height = h.get();
@@ -126,7 +130,7 @@ public class Loader {
 		return textureId;
 	}
 	
-	public void cleanUp(){
+	public void onGameClose(){
 		for(int vao:vaos){
 			GL30.glDeleteVertexArrays(vao);
 		}
@@ -138,14 +142,14 @@ public class Loader {
 		}
 	}
 	
-	private int createVAO(){
+	private static int createVAO(){
 		int vaoID = GL30.glGenVertexArrays();
 		vaos.add(vaoID);
 		GL30.glBindVertexArray(vaoID);
 		return vaoID;
 	}
 	
-	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data){
+	private static void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data){
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
@@ -155,11 +159,11 @@ public class Loader {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
 	
-	private void unbindVAO(){
+	private static void unbindVAO(){
 		GL30.glBindVertexArray(0);
 	}
 	
-	private void bindIndicesBuffer(int[] indices){
+	private static void bindIndicesBuffer(int[] indices){
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
@@ -167,18 +171,17 @@ public class Loader {
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 	}
 	
-	private IntBuffer storeDataInIntBuffer(int[] data){
+	private static IntBuffer storeDataInIntBuffer(int[] data){
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
 	}
 	
-	private FloatBuffer storeDataInFloatBuffer(float[] data){
+	private static FloatBuffer storeDataInFloatBuffer(float[] data){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
 	}
-
 }

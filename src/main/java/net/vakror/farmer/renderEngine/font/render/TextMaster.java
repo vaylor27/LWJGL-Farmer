@@ -1,31 +1,35 @@
 package net.vakror.farmer.renderEngine.font.render;
 
+import net.vakror.farmer.GameEntryPoint;
 import net.vakror.farmer.renderEngine.Loader;
 import net.vakror.farmer.renderEngine.font.mesh.*;
+import net.vakror.farmer.renderEngine.listener.register.AutoRegisterListener;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
+import net.vakror.farmer.renderEngine.listener.type.RenderListener;
 import net.vakror.farmer.renderEngine.renderer.FontRenderer;
-import org.lwjgl.opengl.GL30;
 
 import java.util.*;
 
-public class TextMaster {
+@AutoRegisterListener
+public class TextMaster implements RenderListener, CloseGameListener, GameEntryPoint {
 	
-	private static Loader loader;
 	private static Map<FontType, List<GUIText>> texts = new HashMap<>();
 	private static FontRenderer renderer;
-	
-	public static void init(Loader theLoader){
+	public static final TextMaster INSTANCE = new TextMaster();
+
+	@Override
+	public void initialize(){
 		renderer = new FontRenderer();
-		loader = theLoader;
 	}
 	
-	public static void render(){
+	public void onRender() {
 		renderer.render(texts);
 	}
 	
 	public static void loadText(GUIText text){
 		FontType font = text.getFont();
 		TextMeshData data = font.loadText(text);
-		int vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
+		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
         List<GUIText> textBatch = texts.computeIfAbsent(font, k -> new ArrayList<>());
         textBatch.add(text);
@@ -39,7 +43,7 @@ public class TextMaster {
 		}
 	}
 	
-	public static void cleanUp(){
+	public void onGameClose(){
 		renderer.cleanUp();
 	}
 

@@ -20,6 +20,7 @@ ext {
 }
 
 dependencies {
+    implementation 'org.reflections:reflections:0.10.2'
     implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
     implementation "org.lwjgl:lwjgl"
@@ -63,6 +64,7 @@ dependencies {
     implementation "org.lwjgl:lwjgl-xxhash"
     implementation "org.lwjgl:lwjgl-yoga"
     implementation "org.lwjgl:lwjgl-zstd"
+    implementation "org.slf4j:slf4j-simple:2.0.9"
 
     natives(OperatingSystem.LINUX, true, true);
     natives(OperatingSystem.LINUX, true, false);

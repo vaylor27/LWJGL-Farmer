@@ -14,9 +14,9 @@ public class GuiRenderer {
     private final RawModel quad;
     private final GuiShader shader;
 
-    public GuiRenderer(Loader loader) {
+    public GuiRenderer() {
         float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1};
-        quad = loader.loadToVAO(positions, 2);
+        quad = Loader.loadToVAO(positions, 2);
         shader = new GuiShader();
     }
 
