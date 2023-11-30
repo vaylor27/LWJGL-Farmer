@@ -55,7 +55,7 @@ public class Options implements CloseGameListener {
     }
 
     public void onGameClose() {
-        File file = new File(FarmerGameMain.appDirPath + "/options.txt");
+        File file = new File(FarmerGameMain.appDirPath, "options.txt");
         try(StringWriter writer = new StringWriter()) {
             file.delete();
             file.createNewFile();

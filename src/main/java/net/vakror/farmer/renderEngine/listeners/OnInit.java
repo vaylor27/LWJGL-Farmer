@@ -9,6 +9,7 @@ import net.vakror.farmer.renderEngine.entity.Light;
 import net.vakror.farmer.renderEngine.listener.*;
 import net.vakror.farmer.renderEngine.model.RawModel;
 import net.vakror.farmer.renderEngine.model.TexturedModel;
+import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
 import net.vakror.farmer.renderEngine.util.OBJLoader;
@@ -25,6 +26,7 @@ import static net.vakror.farmer.FarmerGameMain.*;
 
 public class OnInit implements GameEntryPoint {
     public void initialize() {
+        DefaultRegistries.registerDefaults();
         setupObjects();
         setupLight();
         setupListeners();

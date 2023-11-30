@@ -30,6 +30,7 @@ import static net.vakror.farmer.renderEngine.util.JVMUtil.restartJVM;
 public class FarmerGameMain {
     static {
         System.setProperty("java.awt.headless", "true");
+        appDirPath = AppDirsFactory.getInstance().getUserDataDir("james game", "0.0.1", "james");
         DefaultRegistries.registerDefaults();
     }
 
@@ -41,7 +42,7 @@ public class FarmerGameMain {
     public static List<GuiTexture> guis = new ArrayList<>();
     public static List<Light> lights = new ArrayList<>();
     public static List<WaterTile> waterTiles = new ArrayList<>();
-    public static final String appDirPath = AppDirsFactory.getInstance().getUserDataDir("james game", "0.0.1", "james");
+    public static final String appDirPath;
     public static final int assetVersion = 3;
     public static FontType font;
     public static GUIText text;
