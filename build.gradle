@@ -1,11 +1,14 @@
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
-    id 'java'
+    id 'java-library'
     id 'maven-publish'
 }
 
 apply plugin: 'maven-publish'
+group 'net.vakror.game'
+//rootProject.name = 'james-game'
+version '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -150,4 +153,15 @@ def natives(OperatingSystem os, boolean arch, boolean is64) {
     list += ("org.lwjgl:lwjgl-xxhash::" + natives)
     list += ("org.lwjgl:lwjgl-yoga::" + natives)
     list += ("org.lwjgl:lwjgl-zstd::" + natives)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
 }
