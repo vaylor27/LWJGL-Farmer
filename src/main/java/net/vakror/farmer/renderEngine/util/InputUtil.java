@@ -1,32 +1,22 @@
-package net.vakror.farmer.renderEngine.mouse;
+package net.vakror.farmer.renderEngine.util;
 
 import net.vakror.farmer.GameEntryPoint;
 import net.vakror.farmer.Options;
 import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.listener.*;
-import net.vakror.farmer.renderEngine.listener.type.*;
-import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
+import net.vakror.farmer.renderEngine.listener.Listeners;
+import net.vakror.farmer.renderEngine.listener.type.MouseCapturedListener;
+import net.vakror.farmer.renderEngine.mouse.MouseCoordinates;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWVidMode;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 
 public class InputUtil implements GameEntryPoint {
-
-
-    static {
-        GLFW.glfwSetScrollCallback(Window.window, GLFWScrollCallback.create(InputUtil::glfwScrollCallback));
-        GLFW.glfwSetFramebufferSizeCallback(Window.window, GLFWFramebufferSizeCallback.create(InputUtil::glfwWindowResizeCallback));
-        GLFW.glfwSetCursorPosCallback(Window.window, GLFWCursorPosCallback.create(InputUtil::glfwCursorPos));
-        GLFW.glfwSetMouseButtonCallback(Window.window, GLFWMouseButtonCallback.create(InputUtil::glfwClick));
-        glfwSetKeyCallback(Window.window, InputUtil::onKeyPress);
-    }
-
     public static final Map<Integer, KeyAction> keys = new HashMap<>();
     public static boolean isHoveringOverGui;
     public static final MouseCoordinates currentMousePos = new MouseCoordinates(new Vector2f(0, 0));
@@ -38,17 +28,10 @@ public class InputUtil implements GameEntryPoint {
     public static MouseButton buttonDown = null;
     public static Vector2d initialMouseCoords = new Vector2d(94, 481);
     public static boolean isCursorDisabled = false;
-
-    public static void glfwScrollCallback(long windowID, double dx, double dy) {
-        xScrollValue = dx;
-        yScrollValue = dy;
-
-        Listeners.getListeners(MouseScrollListener.class).forEach((listener) -> listener.onScroll(windowID, dx, dy));
-    }
-
-    public static void glfwWindowResizeCallback(long windowId, int width, int height) {
-        Listeners.getListeners(WindowResizeListener.class).forEach(listener -> listener.onWindowResize(width, height));
-    }
+    public static boolean isWindowFocused = true;
+    public static Vector2f windowCoords;
+    public static boolean isWindowIconified = false;
+    public static boolean isWindowMaximized = false;
 
     public static int getWindowWidth() {
         int[] width = new int[1];
@@ -62,45 +45,6 @@ public class InputUtil implements GameEntryPoint {
         int[] height = new int[1];
         org.lwjgl.glfw.GLFW.glfwGetWindowSize(Window.window, width, height);
         return height[0];
-    }
-
-    public static void glfwClick(long window, int button, int action, int mods) {
-        for (MouseButton value : MouseButton.values()) {
-            if (value.id == button) {
-                buttonDown = value;
-                break;
-            }
-        }
-        Listeners.getListeners(MouseButtonListener.class).forEach((listener) -> listener.onClick(window, button, action));
-    }
-
-    private static void onKeyPress(long window, int key, int scancode, int action, int mods) {
-        DefaultRegistries.KEYBINDINGS.forEach((keyBinding -> {
-            if (keyBinding.key == key) {
-                keyBinding.execute(scancode, action, mods);
-            }
-        }));
-        Listeners.getListeners(KeyPressListener.class).forEach(listener -> listener.onPress(window, key, scancode, action, mods));
-        keys.put(key, KeyAction.fromInt(action));
-    }
-
-    public static void glfwCursorPos(long windowID, double dx, double dy) {
-        if (mouseInNeedOfCorrection) {
-            dx = initialMouseCoords.x;
-            dy = initialMouseCoords.y;
-            GLFW.glfwSetCursorPos(windowID, dx, dy);
-            mouseInNeedOfCorrection = false;
-        }
-        if (isCursorDisabled) {
-            previousCapturedPos.setScreenCoordinates(dx, dy);
-        } else {
-            previousShownPos.setScreenCoordinates(dx, dy);
-        }
-        currentMousePos.setScreenCoordinates(dx, dy);
-
-        double finalDx = dx;
-        double finalDy = dy;
-        Listeners.getListeners(MouseMovementListener.class).forEach(listener -> listener.onMouseMove(windowID, finalDx, finalDy));
     }
 
     public static void disableCursor() {
@@ -166,6 +110,10 @@ public class InputUtil implements GameEntryPoint {
         private final int action;
         KeyAction(int action) {
             this.action = action;
+        }
+
+        public int getAction() {
+            return action;
         }
 
         public static KeyAction fromInt(int action) {

@@ -1,17 +1,20 @@
 package net.vakror.farmer.renderEngine.water;
 
-import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.Set;
-
 import net.vakror.farmer.FarmerGameMain;
-import net.vakror.farmer.renderEngine.listener.*;
+import net.vakror.farmer.renderEngine.listener.Listener;
 import net.vakror.farmer.renderEngine.listener.register.AutoRegisterComplexListener;
 import net.vakror.farmer.renderEngine.listener.register.ListenerProvider;
 import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
 import net.vakror.farmer.renderEngine.listener.type.WindowResizeListener;
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
-import org.lwjgl.opengl.*;
+import net.vakror.farmer.renderEngine.util.InputUtil;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL32;
+
+import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.lwjgl.opengl.GL11.GL_VIEWPORT;
 import static org.lwjgl.opengl.GL11.glGetIntegerv;

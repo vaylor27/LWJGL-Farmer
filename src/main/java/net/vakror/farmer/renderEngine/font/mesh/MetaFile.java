@@ -1,6 +1,6 @@
 package net.vakror.farmer.renderEngine.font.mesh;
 
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
+import net.vakror.farmer.renderEngine.util.InputUtil;
 
 import java.io.BufferedReader;
 import java.io.File;

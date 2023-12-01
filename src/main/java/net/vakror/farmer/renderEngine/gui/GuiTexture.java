@@ -4,11 +4,11 @@ import net.vakror.farmer.renderEngine.listener.register.AutoRegisterComplexListe
 import net.vakror.farmer.renderEngine.listener.type.MouseButtonListener;
 import net.vakror.farmer.renderEngine.listener.type.MouseCapturedListener;
 import net.vakror.farmer.renderEngine.listener.type.MouseMovementListener;
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
 import net.vakror.farmer.renderEngine.util.GuiHelper;
+import net.vakror.farmer.renderEngine.util.InputUtil;
 import org.joml.Vector2f;
 
-import static net.vakror.farmer.renderEngine.mouse.InputUtil.currentMousePos;
+import static net.vakror.farmer.renderEngine.util.InputUtil.currentMousePos;
 
 @AutoRegisterComplexListener
 public abstract class GuiTexture implements MouseButtonListener, MouseMovementListener, MouseCapturedListener {

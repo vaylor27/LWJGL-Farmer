@@ -7,16 +7,15 @@ import net.vakror.farmer.renderEngine.listener.type.MouseButtonListener;
 import net.vakror.farmer.renderEngine.listener.type.MouseCapturedListener;
 import net.vakror.farmer.renderEngine.listener.type.MouseScrollListener;
 import net.vakror.farmer.renderEngine.listener.type.RenderListener;
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
 import net.vakror.farmer.renderEngine.mouse.MousePicker;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
+import net.vakror.farmer.renderEngine.util.InputUtil;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import static net.vakror.farmer.renderEngine.mouse.InputUtil.*;
-import static net.vakror.farmer.renderEngine.mouse.InputUtil.initialMouseCoords;
+import static net.vakror.farmer.renderEngine.util.InputUtil.*;
 
 
 @AutoRegisterListener

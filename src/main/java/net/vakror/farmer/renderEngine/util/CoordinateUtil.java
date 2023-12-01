@@ -1,7 +1,5 @@
 package net.vakror.farmer.renderEngine.util;
 
-import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;

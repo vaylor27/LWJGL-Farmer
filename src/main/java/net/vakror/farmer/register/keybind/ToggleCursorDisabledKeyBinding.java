@@ -1,9 +1,9 @@
 package net.vakror.farmer.register.keybind;
 
-import net.vakror.farmer.renderEngine.mouse.InputUtil;
+import net.vakror.farmer.renderEngine.util.InputUtil;
 
-import static net.vakror.farmer.renderEngine.mouse.InputUtil.isCursorDisabled;
-import static org.lwjgl.glfw.GLFW.*;
+import static net.vakror.farmer.renderEngine.util.InputUtil.isCursorDisabled;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 public class ToggleCursorDisabledKeyBinding extends KeyBinding {
     public ToggleCursorDisabledKeyBinding(int key) {

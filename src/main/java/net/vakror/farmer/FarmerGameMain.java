@@ -1,20 +1,22 @@
 package net.vakror.farmer;
 
 import net.harawata.appdirs.AppDirsFactory;
+import net.vakror.farmer.renderEngine.Loader;
+import net.vakror.farmer.renderEngine.ResourceDownloader;
 import net.vakror.farmer.renderEngine.Window;
-import net.vakror.farmer.renderEngine.*;
 import net.vakror.farmer.renderEngine.entity.Entity;
 import net.vakror.farmer.renderEngine.entity.Light;
 import net.vakror.farmer.renderEngine.font.mesh.FontType;
 import net.vakror.farmer.renderEngine.font.mesh.GUIText;
 import net.vakror.farmer.renderEngine.gui.GuiTexture;
-import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
 import net.vakror.farmer.renderEngine.listener.Listeners;
+import net.vakror.farmer.renderEngine.listener.type.CloseGameListener;
 import net.vakror.farmer.renderEngine.listener.type.RenderListener;
 import net.vakror.farmer.renderEngine.mod.ModLoader;
 import net.vakror.farmer.renderEngine.registry.registries.DefaultRegistries;
 import net.vakror.farmer.renderEngine.terrain.Terrain;
 import net.vakror.farmer.renderEngine.texture.ModelTexture;
+import net.vakror.farmer.renderEngine.util.Callbacks;
 import net.vakror.farmer.renderEngine.util.ResourcePath;
 import net.vakror.farmer.renderEngine.water.WaterFrameBuffers;
 import net.vakror.farmer.renderEngine.water.WaterTile;
@@ -22,7 +24,10 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static net.vakror.farmer.renderEngine.util.JVMUtil.restartJVM;
 
@@ -59,6 +64,7 @@ public class FarmerGameMain {
 
         terrains = new Terrain[10][10];
         Window.init();
+        Callbacks.init();
         ModLoader.findAndLoadAllMods();
         font = new FontType(Loader.loadTexture(new ResourcePath("font/arial"), false), new ResourcePath("arial"));
 
