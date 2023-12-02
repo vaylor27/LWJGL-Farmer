@@ -92,6 +92,7 @@ public class Listeners {
                 e.printStackTrace();
             }
         }
+        reflections = null;
         return instances;
     }
 
