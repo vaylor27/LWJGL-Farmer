@@ -57,6 +57,7 @@ public class ModLoader {
             }
         }
         modLoadingListeners.forEach(ModLoadingListener::onModLoadingFinish);
+        reflections = null;
     }
 
     private static void loadModClasses() {
