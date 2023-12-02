@@ -52,8 +52,17 @@ public class FarmerGameMain {
     public static FontType font;
     public static GUIText text;
     public static final Logger LOGGER = LoggerFactory.getLogger("Farmer Game Main");
+    public static String devModClass;
 
     public static void main(String[] args) {
+
+        for (String arg : args) {
+            String arg1 = arg.replace(" ", "");
+            if (arg1.startsWith("ModInit=")) {
+                String modClass = arg1.split("ModInit=")[1];
+                devModClass = modClass.substring(0, modClass.lastIndexOf('.'));
+            }
+        }
 
         if (ResourceDownloader.doesNeedToDownloadResources()) {
             ResourceDownloader.downloadResources();

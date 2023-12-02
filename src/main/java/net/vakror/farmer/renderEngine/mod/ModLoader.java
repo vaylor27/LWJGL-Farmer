@@ -16,6 +16,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static net.vakror.farmer.FarmerGameMain.LOGGER;
+import static net.vakror.farmer.FarmerGameMain.devModClass;
 import static net.vakror.farmer.renderEngine.listener.Listeners.reflections;
 
 public class ModLoader {
@@ -30,7 +31,11 @@ public class ModLoader {
         List<ModLoadingListener> modLoadingListeners = Listeners.getListeners(ModLoadingListener.class);
         modLoadingListeners.forEach(ModLoadingListener::onModLoadingStart);
         if (reflections == null) {
-            reflections = new Reflections((Object) Arrays.stream(((DynamicClassLoader) ClassLoader.getSystemClassLoader()).getPackages()).map(Package::getName).toList().toArray(new String[0]));
+            List<String> packages = new ArrayList<>(Arrays.stream(((DynamicClassLoader) ClassLoader.getSystemClassLoader()).getPackages()).map(Package::getName).toList());
+            if (devModClass != null) {
+                packages.add(devModClass);
+            }
+            reflections = new Reflections((Object) packages.toArray(new String[0]));
         }
 
         Set<Class<? extends Mod>> modClasses = reflections.getSubTypesOf(Mod.class);
